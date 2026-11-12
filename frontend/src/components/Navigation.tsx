@@ -15,7 +15,6 @@ import {
   CheckSquare,
   CalendarDays,
   Search,
-  Wifi,
   WifiOff,
   RefreshCw,
   StickyNote,
@@ -23,7 +22,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  Sparkles,
 } from 'lucide-react';
 import { Project, RoleTier, StudioDatabaseState } from '../types';
 import { ConnectionState } from '../machines/connectionMachine';
@@ -83,7 +81,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           subtitle: `Scene #${s.scene_number} • ${s.location}`,
           module: 'scripts',
           id: s.id,
-          category: 'Scenes & Screenplay',
+          category: 'Scenes',
         });
       }
     });
@@ -96,7 +94,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           subtitle: `${c.role} • Cast: ${c.actor_name}`,
           module: 'characters',
           id: c.id,
-          category: 'Cast & Characters',
+          category: 'Cast',
         });
       }
     });
@@ -109,7 +107,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           subtitle: `${a.folder_path} • ${a.version}`,
           module: 'assets',
           id: a.id,
-          category: 'Vault Assets',
+          category: 'Vault',
         });
       }
     });
@@ -118,11 +116,11 @@ export const Navigation: React.FC<NavigationProps> = ({
     state.lore_articles.forEach((l) => {
       if (l.title.toLowerCase().includes(q) || l.summary.toLowerCase().includes(q)) {
         results.push({
-          title: `${l.emoji_icon} ${l.title}`,
-          subtitle: `${l.category} • ${l.summary.slice(0, 50)}...`,
+          title: l.title,
+          subtitle: `${l.category} • ${l.summary.slice(0, 50)}`,
           module: 'lore',
           id: l.id,
-          category: 'Lore & Bible',
+          category: 'Lore',
         });
       }
     });
@@ -132,42 +130,42 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   const navGroups = [
     {
-      group: 'OPERATIONS & PLANNING',
+      group: 'Operations',
       items: [
-        { id: 'dashboard', label: 'Project Dashboard', icon: LayoutDashboard, badge: `${state.scenes.length} Scenes` },
-        { id: 'kanban', label: 'Tasks & Kanban', icon: CheckSquare, badge: `${state.kanban_tasks.length}` },
-        { id: 'timeline', label: 'Timeline & Milestones', icon: CalendarDays, badge: `${state.milestones.length}` },
+        { id: 'dashboard', label: 'Project Dashboard', icon: LayoutDashboard, badge: `${state.scenes.length}` },
+        { id: 'kanban', label: 'Production Kanban', icon: CheckSquare, badge: `${state.kanban_tasks.length}` },
+        { id: 'timeline', label: 'Milestones & Timeline', icon: CalendarDays, badge: `${state.milestones.length}` },
       ],
     },
     {
-      group: 'CREATIVE WRITING & STORY',
+      group: 'Creative & Script',
       items: [
-        { id: 'scripts', label: 'Script Editor (Fountain)', icon: FileText, badge: 'Hollywood' },
-        { id: 'analytics', label: 'Script Analytics & Reader', icon: BookOpen, badge: 'Teleprompter' },
-        { id: 'storyboard', label: 'Storyboard Builder', icon: Film, badge: `${state.storyboard_frames.length} Shots` },
-        { id: 'whiteboard', label: 'Creative Whiteboard', icon: Compass, badge: 'Infinite' },
-        { id: 'lore', label: 'Lore & World Bible', icon: BookMarked, badge: `${state.lore_articles.length}` },
+        { id: 'scripts', label: 'Screenplay Editor', icon: FileText, badge: 'Fountain' },
+        { id: 'analytics', label: 'Script Analytics', icon: BookOpen },
+        { id: 'storyboard', label: 'Storyboard Sequence', icon: Film, badge: `${state.storyboard_frames.length}` },
+        { id: 'whiteboard', label: 'Creative Whiteboard', icon: Compass },
+        { id: 'lore', label: 'Lore & Bible', icon: BookMarked, badge: `${state.lore_articles.length}` },
       ],
     },
     {
-      group: 'CAST & CONTINUITY',
+      group: 'Cast & Continuity',
       items: [
-        { id: 'characters', label: 'Character Dossiers', icon: Users2, badge: `${state.characters.length} Cast` },
-        { id: 'team', label: 'Team & Cast Directory', icon: UserCheck, badge: `${state.team_members.length}` },
+        { id: 'characters', label: 'Character Dossiers', icon: Users2, badge: `${state.characters.length}` },
+        { id: 'team', label: 'Cast & Crew Directory', icon: UserCheck, badge: `${state.team_members.length}` },
       ],
     },
     {
-      group: 'MEDIA & AUDIO VAULT',
+      group: 'Media & Foley',
       items: [
-        { id: 'assets', label: 'Asset Vault (DAM)', icon: FolderArchive, badge: `${state.assets.length}` },
-        { id: 'soundboard', label: 'Show Soundboard', icon: Radio, badge: 'Live Foley' },
+        { id: 'assets', label: 'Asset Vault', icon: FolderArchive, badge: `${state.assets.length}` },
+        { id: 'soundboard', label: 'Audio & Foley Vault', icon: Radio, badge: `${state.soundboard_clips.length}` },
       ],
     },
     {
-      group: 'STUDIO INFRASTRUCTURE',
+      group: 'Studio Infrastructure',
       items: [
-        { id: 'chat', label: 'Communication Hub', icon: MessageSquare, badge: 'Live WS' },
-        { id: 'admin', label: 'Admin & RBAC Security', icon: ShieldCheck, badge: currentRole },
+        { id: 'chat', label: 'Team Communication', icon: MessageSquare },
+        { id: 'admin', label: 'Administration & Security', icon: ShieldCheck, badge: currentRole },
       ],
     },
   ];
@@ -175,7 +173,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   const handleManualSyncClick = async () => {
     setSyncing(true);
     await onManualSync();
-    setTimeout(() => setSyncing(false), 800);
+    setTimeout(() => setSyncing(false), 600);
   };
 
   const handleSelectSearchResult = (result: (typeof searchResults)[0]) => {
@@ -190,27 +188,27 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <>
       {/* Top Header */}
-      <header className="sticky top-0 z-40 w-full h-16 bg-[#0f1117] border-b border-[#1e2330] px-4 lg:px-6 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full h-14 bg-[#0a0b0e] border-b border-[rgba(255,255,255,0.07)] px-4 lg:px-6 flex items-center justify-between">
         {/* Left: Mobile hamburger & Studio Logo */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-md hover:bg-[#1e2330] text-slate-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="lg:hidden p-2 rounded-md hover:bg-[#151820] text-slate-400 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 font-bold tracking-wider text-base">
+            <div className="w-8 h-8 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.10)] flex items-center justify-center text-amber-400 font-mono font-bold text-xs">
               FG
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-white tracking-tight text-sm lg:text-base">FATGOATS</span>
-                <span className="text-amber-500 font-semibold text-xs lg:text-sm">STUDIOS</span>
+                <span className="font-semibold text-slate-100 tracking-tight text-sm">FatGoats</span>
+                <span className="text-slate-400 text-xs">Studios</span>
               </div>
-              <p className="text-[10px] text-slate-400 hidden sm:block font-medium">Production OS & Continuity Suite</p>
+              <p className="text-[10px] text-slate-400 hidden sm:block">Production OS</p>
             </div>
           </div>
 
@@ -218,17 +216,17 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="relative ml-2 sm:ml-4">
             <button
               onClick={() => setProjectDropdownOpen(!projectDropdownOpen)}
-              className="flex items-center gap-2 px-2.5 py-1.5 rounded bg-[#161922] border border-[#2a3144] hover:border-amber-500/50 text-xs font-medium text-slate-200 transition-colors"
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.16)] text-xs text-slate-200 transition-colors"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               <span className="max-w-[120px] sm:max-w-[180px] truncate">{activeProject.title}</span>
-              <ChevronDown size={14} className="text-slate-400" />
+              <ChevronDown size={13} className="text-slate-400" />
             </button>
 
             {projectDropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#161922] border border-[#2a3144] rounded-lg shadow-2xl p-1.5 z-50">
-                <div className="text-[10px] font-semibold text-slate-400 px-2 py-1 uppercase tracking-wider">
-                  Active Production Pipelines
+              <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#151820] border border-[rgba(255,255,255,0.12)] rounded-lg shadow-xl p-1 z-50">
+                <div className="text-[10px] text-slate-400 px-2 py-1 font-medium">
+                  Productions
                 </div>
                 {allProjects.map((proj) => (
                   <button
@@ -237,12 +235,14 @@ export const Navigation: React.FC<NavigationProps> = ({
                       onSelectProject(proj);
                       setProjectDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-2.5 py-2 rounded text-xs flex items-center justify-between ${
-                      proj.id === activeProject.id ? 'bg-amber-500/10 text-amber-400 font-semibold' : 'text-slate-300 hover:bg-[#202534]'
+                    className={`w-full text-left px-2.5 py-1.5 rounded text-xs flex items-center justify-between transition-colors ${
+                      proj.id === activeProject.id
+                        ? 'bg-amber-500/10 text-amber-300 font-medium'
+                        : 'text-slate-300 hover:bg-[#1e222d]'
                     }`}
                   >
                     <span className="truncate">{proj.title}</span>
-                    <span className="text-[10px] text-slate-500 bg-[#0f1117] px-1.5 py-0.5 rounded border border-[#2a3144]">
+                    <span className="text-[10px] text-slate-400 bg-[#0a0b0e] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.06)] font-mono">
                       {proj.status}
                     </span>
                   </button>
@@ -253,121 +253,113 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
 
         {/* Center: Global Filter-and-Jump Search */}
-        <div className="relative hidden md:block w-72 lg:w-96">
+        <div className="relative hidden md:block w-72 lg:w-80">
           <div className="relative flex items-center">
-            <Search size={15} className="absolute left-3 text-slate-400 pointer-events-none" />
+            <Search size={14} className="absolute left-3 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Jump to scene, character, asset, lore... (Ctrl+K)"
+              placeholder="Search project (Ctrl+K)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
-              className="w-full bg-[#161922] border border-[#2a3144] focus:border-amber-500/70 rounded-lg pl-9 pr-4 py-1.5 text-xs text-white placeholder-slate-500 outline-none transition-all"
+              className="w-full bg-[#151820] border border-[rgba(255,255,255,0.08)] focus:border-amber-500/50 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-400 outline-none transition-colors"
             />
           </div>
 
           {/* Jump Search Results Dropdown */}
           {searchFocused && searchResults.length > 0 && (
-            <div className="absolute left-0 top-full mt-1.5 w-full bg-[#161922] border border-[#2a3144] rounded-lg shadow-2xl overflow-hidden z-50">
-              <div className="p-1.5">
-                {searchResults.map((item) => (
-                  <button
-                    key={`${item.category}_${item.id}`}
-                    onMouseDown={() => handleSelectSearchResult(item)}
-                    className="w-full text-left p-2 rounded hover:bg-[#202534] flex items-start gap-2.5 transition-colors group"
-                  >
-                    <span className="text-[10px] uppercase font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 whitespace-nowrap mt-0.5">
-                      {item.category.split(' ')[0]}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-slate-200 group-hover:text-amber-300 truncate">{item.title}</p>
-                      <p className="text-[11px] text-slate-400 truncate">{item.subtitle}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
+            <div className="absolute left-0 top-full mt-1.5 w-full bg-[#151820] border border-[rgba(255,255,255,0.12)] rounded-lg shadow-xl overflow-hidden z-50 p-1">
+              {searchResults.map((item) => (
+                <button
+                  key={`${item.category}_${item.id}`}
+                  onMouseDown={() => handleSelectSearchResult(item)}
+                  className="w-full text-left p-2 rounded hover:bg-[#1e222d] flex items-start gap-2.5 transition-colors group"
+                >
+                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 whitespace-nowrap mt-0.5">
+                    {item.category}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-slate-200 group-hover:text-amber-300 truncate">{item.title}</p>
+                    <p className="text-[11px] text-slate-400 truncate">{item.subtitle}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           )}
         </div>
 
         {/* Right: Quick actions, Sync status, Role indicator */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Explicit Connection & Sync State Machine Indicator */}
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border font-medium ${
-              connectionState === 'CONNECTED_IDLE'
-                ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-400'
-                : connectionState === 'SYNCING_BATCH'
-                ? 'bg-sky-950/30 border-sky-500/30 text-sky-400'
-                : connectionState === 'OFFLINE_BACKLOG'
-                ? 'bg-amber-950/30 border-amber-500/30 text-amber-400'
-                : 'bg-slate-900 border-slate-700 text-slate-400'
-            }`}
+            className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.08)] text-xs text-slate-300 font-medium"
             title={`Machine State: ${connectionState || (isOnline ? 'CONNECTED_IDLE' : 'OFFLINE_BACKLOG')}`}
           >
             {connectionState === 'CONNECTED_IDLE' ? (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             ) : connectionState === 'SYNCING_BATCH' ? (
-              <RefreshCw size={12} className="animate-spin text-sky-400" />
+              <RefreshCw size={11} className="animate-spin text-amber-400" />
+            ) : connectionState === 'OFFLINE_BACKLOG' ? (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
             ) : (
-              <WifiOff size={13} className="text-amber-400" />
+              <WifiOff size={12} className="text-slate-400" />
             )}
-            <span className="hidden sm:inline">
+            <span className="hidden sm:inline text-[11px]">
               {connectionState === 'CONNECTED_IDLE'
-                ? 'Rust DB Synced'
+                ? 'Synced'
                 : connectionState === 'SYNCING_BATCH'
-                ? 'Syncing Backlog...'
+                ? 'Syncing...'
                 : connectionState === 'OFFLINE_BACKLOG'
-                ? `Offline (${backlogCount})`
+                ? `Offline • ${backlogCount} queued`
                 : isOnline
                 ? 'Online'
                 : 'Offline'}
             </span>
             {backlogCount > 0 && connectionState !== 'OFFLINE_BACKLOG' && (
-              <span className="bg-amber-500 text-black font-bold text-[10px] px-1.5 rounded-full ml-1">
+              <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">
                 {backlogCount}
               </span>
             )}
             <button
               onClick={handleManualSyncClick}
-              className={`p-1 hover:text-white transition-transform ${syncing ? 'animate-spin text-amber-400' : ''}`}
-              title="Force Sync / Flush Machine Queue"
+              className={`p-0.5 text-slate-400 hover:text-white transition-colors ${syncing ? 'animate-spin text-amber-400' : ''}`}
+              title="Force sync"
             >
-              <RefreshCw size={12} />
+              <RefreshCw size={11} />
             </button>
           </div>
 
           {/* Quick Notes Scratchpad Toggle */}
           <button
             onClick={onToggleNotes}
-            className="p-2 rounded-lg bg-[#161922] border border-[#2a3144] hover:border-amber-500/50 text-slate-300 hover:text-amber-400 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
-            title="Quick Production Scratchpad"
+            className="p-1.5 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.16)] text-slate-300 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+            title="Scratchpad notes"
           >
-            <StickyNote size={16} />
+            <StickyNote size={15} />
           </button>
 
           {/* Activity & Audit Drawer Toggle */}
           <button
             onClick={onToggleAudit}
-            className="p-2 rounded-lg bg-[#161922] border border-[#2a3144] hover:border-amber-500/50 text-slate-300 hover:text-amber-400 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
-            title="Production Audit Log"
+            className="p-1.5 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.16)] text-slate-300 hover:text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+            title="Activity audit log"
           >
-            <History size={16} />
+            <History size={15} />
           </button>
 
           {/* Role Tier Badge with switcher */}
-          <div className="hidden xl:flex items-center gap-1.5 bg-[#161922] border border-[#2a3144] px-2 py-1 rounded-md text-[11px]">
-            <span className="text-slate-400 font-medium">Role:</span>
+          <div className="hidden xl:flex items-center gap-1.5 bg-[#151820] border border-[rgba(255,255,255,0.08)] px-2 py-1 rounded-lg text-xs">
+            <span className="text-slate-400">Role:</span>
             <select
               value={currentRole}
               onChange={(e) => onChangeRole(e.target.value as RoleTier)}
-              className="bg-transparent text-amber-400 font-semibold outline-none cursor-pointer"
+              className="bg-transparent text-amber-400 font-medium outline-none cursor-pointer"
             >
-              <option value="Super Admin" className="bg-[#161922] text-slate-200">Super Admin (CEO)</option>
-              <option value="Admin" className="bg-[#161922] text-slate-200">Admin</option>
-              <option value="Editor" className="bg-[#161922] text-slate-200">Editor</option>
-              <option value="Viewer" className="bg-[#161922] text-slate-200">Viewer</option>
+              <option value="Super Admin" className="bg-[#151820] text-slate-200">Super Admin (CEO)</option>
+              <option value="Admin" className="bg-[#151820] text-slate-200">Admin</option>
+              <option value="Editor" className="bg-[#151820] text-slate-200">Editor</option>
+              <option value="Viewer" className="bg-[#151820] text-slate-200">Viewer</option>
             </select>
           </div>
         </div>
@@ -377,7 +369,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       <div className="flex">
         {/* Desktop Collapsible Navigation Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-30 w-64 bg-[#0f1117] border-r border-[#1e2330] pt-16 flex flex-col justify-between transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-30 w-64 bg-[#0a0b0e] border-r border-[rgba(255,255,255,0.07)] pt-14 flex flex-col justify-between transition-transform duration-200 ease-out lg:translate-x-0 ${
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -385,7 +377,7 @@ export const Navigation: React.FC<NavigationProps> = ({
           <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
             {navGroups.map((group) => (
               <div key={group.group}>
-                <p className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                <p className="px-3 text-[11px] font-medium text-slate-400 mb-1.5">
                   {group.group}
                 </p>
                 <div className="space-y-0.5">
@@ -399,20 +391,20 @@ export const Navigation: React.FC<NavigationProps> = ({
                           setActiveModule(item.id);
                           setMobileMenuOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors ${
                           isActive
-                            ? 'bg-amber-500 text-black font-semibold shadow-sm'
-                            : 'text-slate-300 hover:bg-[#161922] hover:text-white'
+                            ? 'bg-[#1a1e28] text-white font-medium border-l-2 border-amber-500 shadow-sm'
+                            : 'text-slate-300 hover:bg-[#151820] hover:text-white border-l-2 border-transparent'
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Icon size={16} className={isActive ? 'text-black' : 'text-slate-400'} />
+                          <Icon size={15} className={isActive ? 'text-amber-400' : 'text-slate-400'} />
                           <span>{item.label}</span>
                         </div>
                         {item.badge && (
                           <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${
-                              isActive ? 'bg-black/20 text-black font-bold' : 'bg-[#1a1f2c] text-slate-400 border border-[#2a3144]'
+                            className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+                              isActive ? 'bg-[#222736] text-amber-300' : 'text-slate-400 bg-[#12141c]'
                             }`}
                           >
                             {item.badge}
@@ -427,16 +419,16 @@ export const Navigation: React.FC<NavigationProps> = ({
           </div>
 
           {/* User profile footer */}
-          <div className="p-3 border-t border-[#1e2330] bg-[#0b0d13]">
+          <div className="p-3 border-t border-[rgba(255,255,255,0.07)] bg-[#0c0e12]">
             <div className="flex items-center gap-2.5">
               <img
                 src={state.team_members[0]?.avatar_url || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100'}
                 alt="Avatar"
-                className="w-8 h-8 rounded-full border border-amber-500/40 object-cover"
+                className="w-7 h-7 rounded-full border border-[rgba(255,255,255,0.12)] object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-200 truncate">{state.team_members[0]?.name || 'Studio Member'}</p>
-                <p className="text-[10px] text-amber-500 truncate font-medium">{currentRole} • {state.team_members[0]?.studio_title || 'Showrunner'}</p>
+                <p className="text-xs font-medium text-slate-200 truncate">{state.team_members[0]?.name || 'Studio Member'}</p>
+                <p className="text-[11px] text-slate-400 truncate">{currentRole} • {state.team_members[0]?.studio_title || 'Showrunner'}</p>
               </div>
             </div>
           </div>
@@ -446,7 +438,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         {mobileMenuOpen && (
           <div
             onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/60 z-20 lg:hidden backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 z-20 lg:hidden"
           />
         )}
       </div>

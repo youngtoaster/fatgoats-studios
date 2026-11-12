@@ -59,12 +59,12 @@ export const Soundboard: React.FC<SoundboardProps> = ({
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
   const categories: Array<{ id: string; label: string; icon: any }> = [
-    { id: 'all', label: 'All Audio Banks', icon: Radio },
-    { id: 'Dialogue', label: 'Dialogue Cuts', icon: MessageSquare },
-    { id: 'Score', label: 'Soundtrack & Score', icon: Music },
-    { id: 'SFX', label: 'Sound Effects (SFX)', icon: Zap },
-    { id: 'Foley', label: 'Foley Actions', icon: Play },
-    { id: 'Ambient', label: 'Ambient Atmospheres', icon: Wind },
+    { id: 'all', label: 'All banks', icon: Radio },
+    { id: 'Dialogue', label: 'Dialogue cuts', icon: MessageSquare },
+    { id: 'Score', label: 'Soundtrack & score', icon: Music },
+    { id: 'SFX', label: 'Sound effects (SFX)', icon: Zap },
+    { id: 'Foley', label: 'Foley actions', icon: Play },
+    { id: 'Ambient', label: 'Ambient atmospheres', icon: Wind },
   ];
 
   const filteredClips = state.soundboard_clips.filter((clip) => {
@@ -177,34 +177,34 @@ export const Soundboard: React.FC<SoundboardProps> = ({
     };
 
     await ApiService.postChatMessage(chatMsg);
-    alert(`Clip "${clip.title}" dispatched to #sound-foley chat channel!`);
+    alert(`Clip "${clip.title}" dispatched to #sound-foley chat channel.`);
   };
 
   return (
     <div className="space-y-4">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0f1117] border border-[#1e2330] p-4 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#101217] border border-white/5 p-4 rounded-xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <Radio size={20} />
+          <div className="p-2 rounded-lg bg-[#151820] text-slate-400 border border-white/5">
+            <Radio size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white tracking-tight">Show Soundboard & Foley Vault</h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-amber-400 border border-[#2a3144]">
+              <h2 className="text-base font-semibold text-white tracking-tight">Soundboard & foley</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#151820] text-slate-400 border border-white/5">
                 Recorder: {recorderSnapshot.state}
               </span>
             </div>
-            <p className="text-xs text-slate-400">Live studio audio banks, instant chat dispatch & live microphone foley recorder</p>
+            <p className="text-xs text-slate-400 mt-0.5">Studio audio banks, instant chat dispatch, and microphone recording</p>
           </div>
         </div>
       </div>
 
-      {/* Live In-Studio Foley Recording Bar (Explicit FSM Powered) */}
-      <div className="studio-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-[#12151e] to-[#0f1117]">
+      {/* Live In-Studio Foley Recording Bar */}
+      <div className="bg-[#101217] border border-white/5 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-xs font-bold text-white">Record Foley or Custom Soundbite Live</h3>
-          <p className="text-[11px] text-slate-400">Capture mic audio with state-machine safety and pre-save preview</p>
+          <h3 className="text-xs font-semibold text-white">Record foley or soundbite</h3>
+          <p className="text-[11px] text-slate-400 mt-0.5">Capture microphone audio with state-machine safety and pre-save preview</p>
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
@@ -215,12 +215,12 @@ export const Soundboard: React.FC<SoundboardProps> = ({
                 placeholder="Sound label (e.g. Laser Impact)..."
                 value={foleyTitle}
                 onChange={(e) => setFoleyTitle(e.target.value)}
-                className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none w-44"
+                className="bg-[#151820] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-white/20 w-44"
               />
               <select
                 value={foleyCategory}
                 onChange={(e) => setFoleyCategory(e.target.value as any)}
-                className="bg-[#161922] border border-[#2a3144] rounded-lg px-2 py-1.5 text-xs text-white outline-none"
+                className="bg-[#151820] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-white/20"
               >
                 <option value="SFX">SFX</option>
                 <option value="Dialogue">Dialogue</option>
@@ -230,43 +230,47 @@ export const Soundboard: React.FC<SoundboardProps> = ({
               </select>
               <button
                 onClick={startRecordingFoley}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-medium text-xs transition-colors"
               >
                 <Mic size={13} />
-                <span>Record Live Foley</span>
+                <span>Record foley</span>
               </button>
             </>
           )}
 
           {recorderSnapshot.state === 'REQUESTING_MIC' && (
-            <span className="text-xs text-amber-400 font-mono animate-pulse">Requesting microphone access...</span>
+            <div className="flex items-center gap-2 text-xs text-amber-400 font-mono">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span>Requesting microphone access...</span>
+            </div>
           )}
 
           {recorderSnapshot.state === 'RECORDING' && (
             <button
               onClick={stopRecordingFoley}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-red-500 text-white font-bold text-xs animate-pulse"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs transition-colors"
             >
-              <Square size={13} />
-              <span>Stop & Review Foley Take</span>
+              <span className="w-2 h-2 rounded-full bg-white mr-0.5" />
+              <Square size={12} />
+              <span>Stop & review take</span>
             </button>
           )}
 
           {recorderSnapshot.state === 'REVIEWING' && (
-            <div className="flex items-center gap-2 bg-[#161922] p-1.5 rounded-lg border border-[#2a3144]">
+            <div className="flex items-center gap-2 bg-[#151820] p-1.5 rounded-lg border border-white/10">
               {recorderSnapshot.context.audioUrl && (
                 <audio src={recorderSnapshot.context.audioUrl} controls className="h-6 w-36" />
               )}
               <button
                 onClick={commitSaveFoley}
-                className="flex items-center gap-1 px-3 py-1 rounded bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+                className="flex items-center gap-1 px-3 py-1 rounded bg-amber-500 text-black text-xs font-medium hover:bg-amber-400"
               >
                 <Check size={12} />
                 <span>Save to {foleyCategory}</span>
               </button>
               <button
                 onClick={() => sendRecorder({ type: 'DISCARD' })}
-                className="p-1 rounded text-slate-400 hover:text-red-400"
+                className="p-1 rounded text-slate-400 hover:text-rose-400 transition-colors"
                 title="Discard take"
               >
                 <Trash2 size={13} />
@@ -275,7 +279,7 @@ export const Soundboard: React.FC<SoundboardProps> = ({
           )}
 
           {recorderSnapshot.state === 'ERROR' && (
-            <div className="flex items-center gap-2 text-xs text-red-400">
+            <div className="flex items-center gap-2 text-xs text-rose-400">
               <AlertTriangle size={13} />
               <span>{recorderSnapshot.context.errorMessage}</span>
               <button
@@ -290,20 +294,21 @@ export const Soundboard: React.FC<SoundboardProps> = ({
       </div>
 
       {/* Category Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
         {categories.map((c) => {
           const Icon = c.icon;
+          const isSel = selectedCategory === c.id;
           return (
             <button
               key={c.id}
               onClick={() => setSelectedCategory(c.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors flex items-center gap-2 border ${
-                selectedCategory === c.id
-                  ? 'bg-amber-500/15 border-amber-500/50 text-amber-300'
-                  : 'bg-[#0f1117] border-[#1e2330] text-slate-400 hover:text-slate-200'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 border ${
+                isSel
+                  ? 'bg-[#1a1e28] border-white/10 text-white'
+                  : 'bg-[#101217] border-white/5 text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Icon size={13} />
+              <Icon size={13} className={isSel ? 'text-amber-400' : 'text-slate-500'} />
               <span>{c.label}</span>
             </button>
           );
@@ -311,17 +316,17 @@ export const Soundboard: React.FC<SoundboardProps> = ({
       </div>
 
       {/* Soundboard Clips Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {filteredClips.map((clip) => {
           const isPlaying = playingClipId === clip.id;
 
           return (
             <div
               key={clip.id}
-              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+              className={`p-4 rounded-xl border transition-colors flex flex-col justify-between ${
                 isPlaying
-                  ? 'bg-[#141824] border-amber-500/60 shadow-lg'
-                  : 'bg-[#0f1117] border-[#1e2330] hover:border-[#2a3144]'
+                  ? 'bg-[#141824] border-amber-500/40'
+                  : 'bg-[#101217] border-white/5 hover:border-white/15'
               }`}
             >
               {/* Hidden audio element */}
@@ -335,21 +340,21 @@ export const Soundboard: React.FC<SoundboardProps> = ({
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="text-xs font-bold text-white leading-snug">{clip.title}</h4>
-                    <span className="text-[10px] font-mono text-amber-400">{clip.category} Bank</span>
+                    <h4 className="text-xs font-semibold text-white leading-snug">{clip.title}</h4>
+                    <span className="text-[10px] font-mono text-amber-400/90">{clip.category} bank</span>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161922] text-slate-400 border border-[#2a3144]">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#151820] text-slate-400 border border-white/5 tabular-nums">
                     {clip.duration_seconds}s
                   </span>
                 </div>
 
                 {/* Simulated Waveform Visualizer */}
-                <div className="h-10 rounded-lg bg-[#0b0d13] border border-[#1e2330] px-3 flex items-center justify-between gap-1">
+                <div className="h-10 rounded-lg bg-[#0a0b0e] border border-white/5 px-3 flex items-center justify-between gap-1">
                   {clip.waveform_points.map((pt, i) => (
                     <div
                       key={i}
-                      className={`flex-1 rounded-full transition-all duration-200 ${
-                        isPlaying ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'
+                      className={`flex-1 rounded-full transition-all duration-150 ${
+                        isPlaying ? 'bg-amber-400' : 'bg-slate-700'
                       }`}
                       style={{ height: `${isPlaying ? Math.min(100, pt * 1.2) : pt}%` }}
                     />
@@ -358,25 +363,25 @@ export const Soundboard: React.FC<SoundboardProps> = ({
               </div>
 
               {/* Controls Bar */}
-              <div className="pt-3 mt-3 border-t border-[#1e2330] flex items-center justify-between text-xs">
+              <div className="pt-3 mt-3 border-t border-white/5 flex items-center justify-between text-xs">
                 <button
                   onClick={() => togglePlayClip(clip)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-xs transition-colors ${
                     isPlaying
                       ? 'bg-amber-500 text-black'
-                      : 'bg-[#161922] text-slate-200 hover:text-white border border-[#2a3144]'
+                      : 'bg-[#151820] text-slate-200 hover:text-white border border-white/10'
                   }`}
                 >
                   {isPlaying ? <Pause size={13} /> : <Play size={13} />}
-                  <span>{isPlaying ? 'Stop' : 'Play Clip'}</span>
+                  <span>{isPlaying ? 'Stop' : 'Play clip'}</span>
                 </button>
 
                 <div className="flex items-center gap-1.5">
                   {/* Share to Chat button */}
                   <button
                     onClick={() => shareToChat(clip)}
-                    className="p-1.5 rounded-md bg-[#161922] hover:bg-[#202534] border border-[#2a3144] text-slate-300 hover:text-amber-400"
-                    title="Share directly to #sound chat channel"
+                    className="p-1.5 rounded-md bg-[#151820] hover:bg-[#1a1e28] border border-white/10 text-slate-300 hover:text-amber-400 transition-colors"
+                    title="Share directly to #sound-foley chat channel"
                   >
                     <Share2 size={13} />
                   </button>
@@ -384,20 +389,20 @@ export const Soundboard: React.FC<SoundboardProps> = ({
                   {/* Loop toggle */}
                   <button
                     onClick={() => onSaveClip({ ...clip, is_looping: !clip.is_looping })}
-                    className={`p-1.5 rounded-md border ${
+                    className={`p-1.5 rounded-md border transition-colors ${
                       clip.is_looping
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                        : 'bg-[#161922] text-slate-400 border-[#2a3144]'
+                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                        : 'bg-[#151820] text-slate-400 border-white/10 hover:text-slate-200'
                     }`}
-                    title="Toggle Loop"
+                    title="Toggle loop"
                   >
                     <Repeat size={13} />
                   </button>
 
                   <button
                     onClick={() => onDeleteClip(clip.id)}
-                    className="p-1.5 text-slate-500 hover:text-red-400"
-                    title="Delete Clip"
+                    className="p-1.5 text-slate-500 hover:text-rose-400 rounded transition-colors"
+                    title="Delete clip"
                   >
                     <Trash2 size={13} />
                   </button>

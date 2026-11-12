@@ -9,20 +9,15 @@ import {
   Square,
   Volume2,
   Users,
-  Eye,
-  Sliders,
   ChevronRight,
   Plus,
   Trash2,
   Clock,
-  Sparkles,
   BarChart2,
   Maximize2,
   Minimize2,
-  Check,
   RotateCcw,
   AlertTriangle,
-  Info,
 } from 'lucide-react';
 import { Episode, Scene, Character, Project } from '../types';
 import { useExplicitMachine } from '../machines/useExplicitMachine';
@@ -67,7 +62,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
   onOpenAnalytics,
 }) => {
   const [selectedSceneId, setSelectedSceneId] = useState<string>(scenes[0]?.id || '');
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('preview');
+  const [activeTab, setActiveTab] = useState<'preview' | 'editor'>('preview');
 
   // Time-lock embargo modal state
   const [showLockModal, setShowLockModal] = useState(false);
@@ -175,7 +170,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
     } catch (e: any) {
       sendAudio({
         type: 'MIC_DENIED',
-        error: e?.message || 'Microphone access denied or unavailable in this environment',
+        error: e?.message || 'Microphone access denied or unavailable',
       });
     }
   };
@@ -240,7 +235,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
     });
   }, [currentScene, characters]);
 
-  // Fountain Screenplay Parser
+  // Fountain Screenplay Parser (Hollywood Industry Standard)
   const parseFountain = (raw: string) => {
     const lines = raw.split('\n');
     return lines.map((line, idx) => {
@@ -250,33 +245,37 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
         return <div key={idx} className="h-4" />;
       }
 
+      // Scene heading
       if (/^(EXT\.|INT\.|I\/E\.|INT\/EXT\.|EST\.)/i.test(trimmed)) {
         return (
           <div
             key={idx}
-            className="font-bold text-amber-400 tracking-wider text-sm mt-6 mb-2 uppercase border-b border-amber-500/20 pb-1 font-screenplay"
+            className="font-mono font-medium text-amber-400 text-xs mt-6 mb-2 border-b border-[rgba(255,255,255,0.06)] pb-1"
           >
             {trimmed}
           </div>
         );
       }
 
+      // Transition
       if (/^(CUT TO:|FADE OUT\.|FADE IN:|DISSOLVE TO:|MATCH CUT TO:)/i.test(trimmed) || trimmed.endsWith('TO:')) {
         return (
-          <div key={idx} className="text-right text-slate-400 text-xs font-semibold my-4 tracking-widest uppercase font-screenplay">
+          <div key={idx} className="text-right text-slate-400 text-xs my-3 font-mono">
             {trimmed}
           </div>
         );
       }
 
+      // Parenthetical
       if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
         return (
-          <div key={idx} className="text-center text-slate-400 italic text-xs my-0.5 max-w-sm mx-auto font-screenplay">
+          <div key={idx} className="text-center text-slate-400 italic text-xs my-0.5 max-w-sm mx-auto font-mono">
             {trimmed}
           </div>
         );
       }
 
+      // Character Cue
       if (
         trimmed === trimmed.toUpperCase() &&
         trimmed.length > 1 &&
@@ -287,7 +286,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
         return (
           <div
             key={idx}
-            className="text-center text-amber-300 font-bold tracking-widest text-xs mt-4 mb-1 uppercase font-screenplay"
+            className="text-center text-slate-200 font-medium text-xs mt-4 mb-1 font-mono"
           >
             {trimmed}
           </div>
@@ -303,16 +302,18 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
         !prevLine.startsWith('INT.');
       const isPrevParen = prevLine.startsWith('(') && prevLine.endsWith(')');
 
+      // Dialogue block
       if (isPrevCue || isPrevParen) {
         return (
-          <div key={idx} className="text-center text-slate-100 text-xs leading-relaxed max-w-md mx-auto mb-2 font-screenplay">
+          <div key={idx} className="text-center text-slate-100 text-xs leading-relaxed max-w-md mx-auto mb-2 font-mono">
             {trimmed}
           </div>
         );
       }
 
+      // Action / narrative block
       return (
-        <div key={idx} className="text-left text-slate-300 text-xs leading-relaxed my-2 max-w-2xl font-screenplay">
+        <div key={idx} className="text-left text-slate-300 text-xs leading-relaxed my-2 max-w-2xl font-mono">
           {trimmed}
         </div>
       );
@@ -333,80 +334,80 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Header & Mode Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0f1117] border border-[#1e2330] p-4 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 studio-card p-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <FileText size={20} />
+          <div className="p-2 rounded-lg bg-[#151820] text-slate-300 border border-[rgba(255,255,255,0.07)]">
+            <FileText size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white tracking-tight">Fountain Screenplay Suite</h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-amber-400 border border-[#2a3144]">
+              <h2 className="text-sm font-medium text-white tracking-tight">Screenplay editor</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono text-slate-400 bg-[#151820] border border-[rgba(255,255,255,0.06)]">
                 FSM: {embargoSnapshot.state}
               </span>
             </div>
-            <p className="text-xs text-slate-400">Industry-standard Hollywood formatting with continuity auto-detection</p>
+            <p className="text-xs text-slate-400">Fountain script formatting with cast continuity auto-detection</p>
           </div>
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
           {/* Editor / Preview Switcher */}
-          <div className="flex bg-[#161922] p-0.5 rounded-lg border border-[#2a3144]">
+          <div className="flex bg-[#0a0b0e] p-0.5 rounded-lg border border-[rgba(255,255,255,0.07)] text-xs">
             <button
               onClick={() => setActiveTab('preview')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                activeTab === 'preview' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                activeTab === 'preview' ? 'bg-[#1a1e28] text-white shadow-sm' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Formatted Script
+              Formatted script
             </button>
             <button
               onClick={() => setActiveTab('editor')}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                activeTab === 'editor' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                activeTab === 'editor' ? 'bg-[#1a1e28] text-white shadow-sm' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Fountain Markdown
+              Fountain markdown
             </button>
           </div>
 
-          {/* Teleprompter / Script Reader button */}
+          {/* Teleprompter / Rehearsal Reader */}
           <button
             onClick={() => sendTele({ type: 'OPEN' })}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161922] hover:bg-[#202534] border border-[#2a3144] text-xs font-medium text-slate-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-xs font-medium text-slate-200 transition-colors"
             title="Open Teleprompter / Rehearsal Reader"
           >
-            <Maximize2 size={13} className="text-amber-400" />
+            <Maximize2 size={13} className="text-slate-400" />
             <span>Teleprompter</span>
           </button>
 
-          {/* Script Analytics Jump */}
+          {/* Script Analytics */}
           {onOpenAnalytics && (
             <button
               onClick={onOpenAnalytics}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161922] hover:bg-[#202534] border border-[#2a3144] text-xs font-medium text-slate-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-xs font-medium text-slate-200 transition-colors"
             >
-              <BarChart2 size={13} className="text-sky-400" />
+              <BarChart2 size={13} className="text-slate-400" />
               <span>Analytics</span>
             </button>
           )}
 
-          {/* Time-Lock Embargo Action */}
+          {/* Embargo Action */}
           {isSceneLocked ? (
             <button
               onClick={removeLock}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-semibold hover:bg-amber-500/30 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium hover:bg-amber-500/20 transition-colors"
             >
               <Unlock size={13} />
-              <span>Unlock Scene ({formatCountdown(embargoSnapshot.context.remainingMs)})</span>
+              <span>Unlock scene ({formatCountdown(embargoSnapshot.context.remainingMs)})</span>
             </button>
           ) : (
             <button
               onClick={() => setShowLockModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161922] hover:bg-[#202534] border border-[#2a3144] text-xs font-medium text-slate-300"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-xs font-medium text-slate-300 transition-colors"
             >
               <Clock size={13} className="text-slate-400" />
-              <span>Embargo Lock</span>
+              <span>Embargo lock</span>
             </button>
           )}
         </div>
@@ -414,16 +415,16 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
 
       {/* Main Screenplay Suite Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Left Column: Episode & Scene Hierarchy Navigator */}
+        {/* Left Column: Scene Hierarchy Navigator */}
         <div className="studio-card p-4 lg:col-span-1 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#1e2330]">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Episode Scenes</span>
+          <div className="flex items-center justify-between pb-2 border-b border-[rgba(255,255,255,0.06)]">
+            <span className="text-xs font-medium text-slate-400">Scenes</span>
             <button
               onClick={() => onCreateScene(episodes[0]?.id || '')}
-              className="p-1 rounded bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs"
+              className="p-1 rounded bg-[#151820] text-slate-300 hover:text-white border border-[rgba(255,255,255,0.08)] text-xs transition-colors"
               title="Add New Scene"
             >
-              <Plus size={14} />
+              <Plus size={13} />
             </button>
           </div>
 
@@ -431,12 +432,12 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
             {episodes.map((ep) => {
               const epScenes = scenes.filter((s) => s.episode_id === ep.id);
               return (
-                <div key={ep.id} className="space-y-1.5">
-                  <div className="flex items-center justify-between px-2 py-1 rounded bg-[#0b0d13] text-[11px] font-semibold text-slate-300">
+                <div key={ep.id} className="space-y-1">
+                  <div className="flex items-center justify-between px-2 py-1 rounded bg-[#0a0b0e] text-[11px] font-medium text-slate-300">
                     <span className="truncate">E{ep.episode_number}: {ep.title}</span>
                     <span className="text-slate-500 font-mono">{epScenes.length}</span>
                   </div>
-                  <div className="space-y-1 pl-1">
+                  <div className="space-y-0.5 pl-1">
                     {epScenes.map((s) => {
                       const isSel = s.id === currentScene?.id;
                       const isLockedItem = Boolean(s.locked_until && new Date(s.locked_until).getTime() > Date.now());
@@ -444,10 +445,10 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                         <button
                           key={s.id}
                           onClick={() => setSelectedSceneId(s.id)}
-                          className={`w-full text-left p-2 rounded-lg text-xs transition-all flex items-center justify-between ${
+                          className={`w-full text-left p-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
                             isSel
-                              ? 'bg-amber-500/15 border border-amber-500/40 text-amber-300 font-semibold'
-                              : 'hover:bg-[#161922] text-slate-300 border border-transparent'
+                              ? 'bg-[#1a1e28] text-white font-medium border-l-2 border-amber-500'
+                              : 'hover:bg-[#151820] text-slate-300 border-l-2 border-transparent'
                           }`}
                         >
                           <div className="min-w-0 pr-2">
@@ -469,37 +470,37 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
         <div className="studio-card p-6 lg:col-span-2 relative min-h-[580px] flex flex-col justify-between">
           {currentScene ? (
             <div>
-              {/* Scene Slug & Header Bar */}
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#1e2330]">
+              {/* Scene Slug Header */}
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-[rgba(255,255,255,0.06)]">
                 <div>
-                  <h3 className="text-sm font-bold text-white font-mono">{currentScene.slugline}</h3>
+                  <h3 className="text-sm font-medium text-white font-mono">{currentScene.slugline}</h3>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Scene #{currentScene.scene_number} • Est. Length: {currentScene.page_length} pages • {currentScene.time_of_day}
+                    Scene #{currentScene.scene_number} • Est. length: {currentScene.page_length} pages • {currentScene.time_of_day}
                   </p>
                 </div>
                 {isSceneLocked && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-950/40 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold animate-pulse">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-medium">
                     <Lock size={12} />
-                    <span>EMBARGO COUNTDOWN: {formatCountdown(embargoSnapshot.context.remainingMs)}</span>
+                    <span>Locked: {formatCountdown(embargoSnapshot.context.remainingMs)}</span>
                   </div>
                 )}
               </div>
 
               {/* Embargo Overlay if locked */}
               {isSceneLocked ? (
-                <div className="p-8 my-8 text-center rounded-xl bg-[#0b0d13] border border-amber-500/30 space-y-4">
-                  <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-                    <Lock size={32} className="text-amber-400" />
+                <div className="p-8 my-8 text-center rounded-xl bg-[#0a0b0e] border border-[rgba(255,255,255,0.07)] space-y-4">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-[#151820] border border-[rgba(255,255,255,0.08)] flex items-center justify-center">
+                    <Lock size={20} className="text-amber-400" />
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-white">Confidential Production Embargo Active</h4>
-                    <p className="text-xs text-slate-300 max-w-md mx-auto mt-1">
-                      This scene is guarded by an explicit state machine countdown to prevent production leaks before the scheduled table read.
+                    <h4 className="text-sm font-medium text-white">Scene embargo active</h4>
+                    <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
+                      This scene is guarded by an explicit state machine countdown to prevent production leaks before the table read.
                     </p>
                   </div>
-                  <div className="p-4 rounded-lg bg-[#161922] max-w-sm mx-auto border border-[#2a3144] space-y-2">
-                    <p className="text-[10px] uppercase font-bold text-slate-400">Countdown to Autonomous Unlock</p>
-                    <p className="text-2xl font-mono font-bold text-amber-400 tracking-wider">
+                  <div className="p-3 rounded-lg bg-[#151820] max-w-xs mx-auto border border-[rgba(255,255,255,0.07)] space-y-1">
+                    <p className="text-[10px] text-slate-400 font-mono">Unlock countdown</p>
+                    <p className="text-xl font-mono font-medium text-amber-400 tabular-nums">
                       {formatCountdown(embargoSnapshot.context.remainingMs)}
                     </p>
                     <p className="text-[10px] text-slate-500 font-mono">
@@ -508,9 +509,9 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                   </div>
                   <button
                     onClick={removeLock}
-                    className="px-5 py-2 rounded-lg bg-amber-500 text-black text-xs font-bold hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                    className="px-4 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.12)] text-white text-xs font-medium transition-colors"
                   >
-                    Super Admin Emergency Override
+                    Admin unlock
                   </button>
                 </div>
               ) : activeTab === 'editor' ? (
@@ -518,12 +519,12 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                 <textarea
                   value={currentScene.content}
                   onChange={(e) => onSaveScene({ ...currentScene, content: e.target.value })}
-                  placeholder="Type screenplay in Fountain markdown (EXT./INT., CHARACTER CUE, dialogue, CUT TO:)..."
-                  className="w-full h-[450px] bg-[#0b0d13] border border-[#1e2330] rounded-lg p-4 font-screenplay text-xs text-slate-200 outline-none focus:border-amber-500/50 resize-y leading-relaxed font-mono"
+                  placeholder="Screenplay in Fountain format (EXT./INT., CHARACTER CUE, dialogue, CUT TO:)..."
+                  className="w-full h-[450px] bg-[#0a0b0e] border border-[rgba(255,255,255,0.07)] rounded-lg p-4 font-screenplay text-xs text-slate-200 outline-none focus:border-amber-500/50 resize-y leading-relaxed font-mono"
                 />
               ) : (
-                /* Hollywood Screenplay Standard Formatted Render */
-                <div className="p-6 bg-[#0b0d13] border border-[#1e2330] rounded-lg min-h-[450px] overflow-y-auto max-h-[500px]">
+                /* Hollywood Screenplay Formatted Render */
+                <div className="p-6 bg-[#0a0b0e] border border-[rgba(255,255,255,0.07)] rounded-lg min-h-[450px] overflow-y-auto max-h-[500px]">
                   {parseFountain(currentScene.content)}
                 </div>
               )}
@@ -534,61 +535,62 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
 
           {/* Bottom Bar: In-Scene Voice Memo Controls */}
           {currentScene && !isSceneLocked && (
-            <div className="mt-4 pt-3 border-t border-[#1e2330] flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2">
-                <span className="text-slate-400 font-medium">In-Scene Director Memo:</span>
+                <span className="text-slate-400">Scene memo:</span>
                 {currentScene.voice_memo_url ? (
-                  <div className="flex items-center gap-2 bg-[#161922] px-2.5 py-1 rounded-md border border-[#2a3144]">
-                    <Volume2 size={14} className="text-amber-400" />
-                    <audio src={currentScene.voice_memo_url} controls className="h-6 w-44" />
+                  <div className="flex items-center gap-2 bg-[#151820] px-2 py-1 rounded-md border border-[rgba(255,255,255,0.07)]">
+                    <Volume2 size={13} className="text-amber-400" />
+                    <audio src={currentScene.voice_memo_url} controls className="h-6 w-40" />
                   </div>
                 ) : (
                   <span className="text-[11px] text-slate-500">None attached</span>
                 )}
               </div>
 
-              {/* Explicit Audio Recorder State Machine UI */}
+              {/* Audio Recorder UI */}
               <div className="flex items-center gap-2">
                 {audioSnapshot.state === 'IDLE' && (
                   <button
                     onClick={handleStartRecording}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161922] hover:bg-[#202534] border border-[#2a3144] text-slate-200 font-medium transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-slate-200 font-medium text-xs transition-colors"
                   >
-                    <Mic size={13} className="text-amber-400" />
-                    <span>Record Voice Memo</span>
+                    <Mic size={13} className="text-slate-400" />
+                    <span>Record memo</span>
                   </button>
                 )}
 
                 {audioSnapshot.state === 'REQUESTING_MIC' && (
-                  <span className="text-xs text-amber-400 animate-pulse flex items-center gap-1.5">
-                    <Mic size={13} /> Requesting mic permissions...
+                  <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                    <Mic size={13} /> Requesting microphone...
                   </span>
                 )}
 
                 {audioSnapshot.state === 'RECORDING' && (
                   <button
                     onClick={handleStopRecording}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white font-bold animate-pulse"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] border border-red-500/40 text-red-400 font-medium text-xs"
                   >
-                    <Square size={13} />
-                    <span>Stop Recording</span>
+                    <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                    <Square size={12} />
+                    <span>Stop recording</span>
                   </button>
                 )}
 
                 {audioSnapshot.state === 'REVIEWING' && (
-                  <div className="flex items-center gap-2 bg-[#161922] p-1.5 rounded-lg border border-[#2a3144]">
+                  <div className="flex items-center gap-2 bg-[#151820] p-1.5 rounded-lg border border-[rgba(255,255,255,0.08)]">
                     {audioSnapshot.context.audioUrl && (
-                      <audio src={audioSnapshot.context.audioUrl} controls className="h-6 w-36" />
+                      <audio src={audioSnapshot.context.audioUrl} controls className="h-6 w-32" />
                     )}
                     <button
                       onClick={handleSaveRecordedMemo}
-                      className="px-2.5 py-1 rounded bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+                      className="px-2.5 py-1 rounded bg-amber-500 text-black text-xs font-medium hover:bg-amber-400"
                     >
-                      Attach Memo
+                      Attach
                     </button>
                     <button
                       onClick={() => sendAudio({ type: 'DISCARD' })}
-                      className="p-1 rounded text-slate-400 hover:text-red-400"
+                      className="p-1 rounded text-slate-400 hover:text-white"
                       title="Discard take"
                     >
                       <Trash2 size={13} />
@@ -597,7 +599,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                 )}
 
                 {audioSnapshot.state === 'SAVING' && (
-                  <span className="text-xs text-amber-400 font-mono">Attaching memo...</span>
+                  <span className="text-xs text-slate-400 font-mono">Attaching memo...</span>
                 )}
 
                 {audioSnapshot.state === 'ERROR' && (
@@ -617,50 +619,50 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
           )}
         </div>
 
-        {/* Right Column: Character Continuity Auto-Detection & Details */}
+        {/* Right Column: Character Continuity Scanner */}
         <div className="studio-card p-4 lg:col-span-1 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#1e2330]">
+          <div className="flex items-center justify-between pb-2 border-b border-[rgba(255,255,255,0.06)]">
             <div className="flex items-center gap-1.5">
-              <Sparkles size={14} className="text-amber-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Continuity Scanner
+              <Users size={14} className="text-slate-400" />
+              <span className="text-xs font-medium text-slate-300">
+                Continuity scanner
               </span>
             </div>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#161922] text-amber-400 border border-[#2a3144]">
-              {detectedCharacters.length} Linked
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#151820] text-slate-400 border border-[rgba(255,255,255,0.06)]">
+              {detectedCharacters.length} linked
             </span>
           </div>
 
           <p className="text-[11px] text-slate-400 leading-normal">
-            Characters automatically recognized in this scene's Fountain cues:
+            Characters recognized in this scene's Fountain cues:
           </p>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {detectedCharacters.length === 0 ? (
-              <div className="p-4 rounded-lg bg-[#0b0d13] text-center text-slate-500 text-xs">
+              <div className="p-4 rounded-lg bg-[#0a0b0e] text-center text-slate-500 text-xs">
                 No registered characters recognized in this scene text.
               </div>
             ) : (
               detectedCharacters.map((char) => (
                 <div
                   key={char.id}
-                  className="p-2.5 rounded-lg bg-[#0b0d13] border border-[#1e2330] flex items-center justify-between hover:border-amber-500/30 transition-colors"
+                  className="p-2 rounded-lg bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)] flex items-center justify-between hover:border-[rgba(255,255,255,0.12)] transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2 min-w-0">
                     <img
                       src={char.avatar_url}
                       alt={char.name}
-                      className="w-8 h-8 rounded-full object-cover border border-[#2a3144]"
+                      className="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.10)]"
                     />
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-white truncate">{char.name}</p>
-                      <p className="text-[10px] text-amber-400 font-mono">{char.role}</p>
+                      <p className="text-xs font-medium text-white truncate">{char.name}</p>
+                      <p className="text-[10px] text-slate-400 font-mono truncate">{char.role}</p>
                     </div>
                   </div>
                   {onNavigateToCharacter && (
                     <button
                       onClick={() => onNavigateToCharacter(char.id)}
-                      className="p-1 rounded hover:bg-[#161922] text-slate-400 hover:text-amber-400"
+                      className="p-1 rounded text-slate-400 hover:text-white"
                       title="Jump to Character Dossier"
                     >
                       <ChevronRight size={14} />
@@ -673,17 +675,17 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
         </div>
       </div>
 
-      {/* Teleprompter / Fullscreen Script Reader Modal (Explicit FSM Powered) */}
+      {/* Teleprompter Rehearsal Modal */}
       {teleSnapshot.state !== 'CLOSED' && currentScene && (
-        <div className="fixed inset-0 z-50 bg-[#08090e] text-white flex flex-col">
+        <div className="fixed inset-0 z-50 bg-[#0a0b0e] text-white flex flex-col">
           {/* Teleprompter Controls Header */}
-          <div className="h-14 border-b border-[#1e2330] bg-[#0f1117] px-6 flex items-center justify-between">
+          <div className="h-14 border-b border-[rgba(255,255,255,0.07)] bg-[#101217] px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="font-mono text-xs font-bold text-amber-400 uppercase">
-                TELEPROMPTER REHEARSAL MODE
+              <span className="font-mono text-xs font-medium text-slate-300">
+                Teleprompter rehearsal
               </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-slate-300 border border-[#2a3144]">
-                STATE: {teleSnapshot.state}
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#151820] text-slate-400 border border-[rgba(255,255,255,0.06)]">
+                {teleSnapshot.state}
               </span>
               <span className="text-xs text-slate-400 font-mono hidden sm:inline">• {currentScene.slugline}</span>
             </div>
@@ -704,7 +706,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                   }
                   className="w-20 accent-amber-500 cursor-pointer"
                 />
-                <span className="font-mono text-amber-400">{teleSnapshot.context.speed}x</span>
+                <span className="font-mono text-slate-300 tabular-nums">{teleSnapshot.context.speed}x</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -722,23 +724,23 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                   }
                   className="w-20 accent-amber-500 cursor-pointer"
                 />
-                <span className="font-mono text-amber-400">{teleSnapshot.context.fontSize}px</span>
+                <span className="font-mono text-slate-300 tabular-nums">{teleSnapshot.context.fontSize}px</span>
               </div>
 
               {teleSnapshot.state === 'READY' && (
                 <button
                   onClick={() => sendTele({ type: 'CUE_COUNTDOWN' })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold hover:bg-amber-400"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-black font-medium hover:bg-amber-400 transition-colors"
                 >
                   <Play size={13} />
-                  <span>Start Cue</span>
+                  <span>Start cue</span>
                 </button>
               )}
 
               {teleSnapshot.state === 'AUTOSCROLLING' && (
                 <button
                   onClick={() => sendTele({ type: 'PAUSE' })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.12)] text-white font-medium"
                 >
                   <Pause size={13} />
                   <span>Pause</span>
@@ -748,7 +750,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
               {teleSnapshot.state === 'PAUSED' && (
                 <button
                   onClick={() => sendTele({ type: 'RESUME' })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-black font-medium hover:bg-amber-400"
                 >
                   <Play size={13} />
                   <span>Resume</span>
@@ -760,7 +762,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
                   if (teleprompterRef.current) teleprompterRef.current.scrollTop = 0;
                   sendTele({ type: 'RESET_TOP' });
                 }}
-                className="p-1.5 rounded-lg bg-[#161922] text-slate-300 hover:text-white border border-[#2a3144]"
+                className="p-1.5 rounded-lg bg-[#151820] text-slate-300 hover:text-white border border-[rgba(255,255,255,0.08)]"
                 title="Rewind to Top"
               >
                 <RotateCcw size={14} />
@@ -768,7 +770,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
 
               <button
                 onClick={() => sendTele({ type: 'CLOSE' })}
-                className="p-1.5 rounded-lg bg-[#161922] text-slate-300 hover:text-white border border-[#2a3144]"
+                className="p-1.5 rounded-lg bg-[#151820] text-slate-300 hover:text-white border border-[rgba(255,255,255,0.08)]"
                 title="Exit Fullscreen"
               >
                 <Minimize2 size={16} />
@@ -778,18 +780,18 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
 
           {/* Lead-in 3..2..1 Countdown Overlay */}
           {teleSnapshot.state === 'COUNTDOWN' && (
-            <div className="absolute inset-0 z-10 bg-black/85 flex flex-col items-center justify-center space-y-4">
-              <span className="text-xs uppercase tracking-widest text-slate-400 font-mono">
-                Rehearsal Autoscroll in
+            <div className="absolute inset-0 z-10 bg-black/90 flex flex-col items-center justify-center space-y-4">
+              <span className="text-xs tracking-wider text-slate-400 font-mono">
+                Autoscroll starting in
               </span>
-              <span className="text-8xl font-mono font-bold text-amber-400 animate-ping">
+              <span className="text-7xl font-mono font-medium text-amber-400 tabular-nums">
                 {teleSnapshot.context.countdownValue}
               </span>
               <button
                 onClick={() => sendTele({ type: 'CLOSE' })}
-                className="mt-6 px-4 py-2 rounded-lg bg-[#161922] border border-[#2a3144] text-xs text-slate-300 hover:text-white"
+                className="mt-4 px-4 py-1.5 rounded-lg bg-[#151820] border border-[rgba(255,255,255,0.10)] text-xs text-slate-300 hover:text-white"
               >
-                Cancel Countdown
+                Cancel
               </button>
             </div>
           )}
@@ -814,23 +816,23 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
       {/* Embargo Time-Lock Dialog Modal */}
       {showLockModal && (
         <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-          <div className="bg-[#0f1117] border border-[#2a3144] rounded-xl p-5 max-w-md w-full space-y-4 shadow-2xl">
+          <div className="bg-[#101217] border border-[rgba(255,255,255,0.12)] rounded-xl p-5 max-w-md w-full space-y-4 shadow-xl">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400">
-                <Lock size={18} />
+              <div className="p-2 rounded-lg bg-[#151820] text-amber-400">
+                <Lock size={16} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">Apply Spoiler & Embargo Time-Lock</h3>
+                <h3 className="text-sm font-medium text-white">Apply scene embargo lock</h3>
                 <p className="text-[11px] text-slate-400">Lock scene content behind an active countdown clock</p>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-slate-300 font-medium">Embargo Duration (Hours):</label>
+              <label className="text-xs text-slate-300 font-medium">Embargo duration (hours):</label>
               <select
                 value={lockHours}
                 onChange={(e) => setLockHours(Number(e.target.value))}
-                className="w-full bg-[#161922] border border-[#2a3144] rounded-lg p-2.5 text-xs text-white outline-none"
+                className="w-full bg-[#151820] border border-[rgba(255,255,255,0.08)] rounded-lg p-2.5 text-xs text-white outline-none"
               >
                 <option value={12}>12 Hours</option>
                 <option value={24}>24 Hours (1 Day)</option>
@@ -841,21 +843,21 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({
             </div>
 
             <p className="text-[11px] text-slate-400">
-              The scene will unlock on: <strong className="text-amber-400 font-mono">{new Date(Date.now() + lockHours * 3600 * 1000).toLocaleString()}</strong>
+              The scene will unlock on: <strong className="text-slate-200 font-mono">{new Date(Date.now() + lockHours * 3600 * 1000).toLocaleString()}</strong>
             </p>
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setShowLockModal(false)}
-                className="px-3 py-1.5 rounded-lg bg-[#161922] text-slate-300 text-xs hover:bg-[#202534]"
+                className="px-3 py-1.5 rounded-lg bg-[#151820] text-slate-300 text-xs hover:bg-[#1e222d]"
               >
                 Cancel
               </button>
               <button
                 onClick={applyLock}
-                className="px-4 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+                className="px-4 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-medium hover:bg-amber-400"
               >
-                Lock Scene
+                Lock scene
               </button>
             </div>
           </div>

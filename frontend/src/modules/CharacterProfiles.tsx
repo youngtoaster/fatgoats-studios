@@ -12,7 +12,6 @@ import {
   Trash2,
   Image as ImageIcon,
   ExternalLink,
-  Sparkles,
   UserCheck,
   Check,
   RotateCcw,
@@ -157,7 +156,7 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
     const newItem: CharacterGalleryItem = {
       id: `img_${Date.now()}`,
       url: newImageUrl.trim(),
-      caption: newImageCaption.trim() || 'Costume & Concept Reference',
+      caption: newImageCaption.trim() || 'Costume & concept reference',
     };
     const updatedGallery = [...(selectedChar.gallery_images || []), newItem];
     onSaveCharacter({ ...selectedChar, gallery_images: updatedGallery });
@@ -169,52 +168,52 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0f1117] border border-[#1e2330] p-4 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#101217] border border-white/5 p-4 rounded-xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <Users2 size={20} />
+          <div className="p-2 rounded-lg bg-[#151820] text-slate-400 border border-white/5">
+            <Users2 size={18} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Character Intelligence Dossiers</h2>
-            <p className="text-xs text-slate-400">Cast profiles, voice test archives, visual turnarounds & cross-studio mentions matrix</p>
+            <h2 className="text-base font-semibold text-white tracking-tight">Character dossiers</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Cast profiles, voice test archives, visual turnarounds, and cross-studio mentions</p>
           </div>
         </div>
 
         <button
           onClick={onCreateCharacter}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-semibold self-start sm:self-auto"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-medium self-start sm:self-auto transition-colors"
         >
           <Plus size={14} />
-          <span>New Character Dossier</span>
+          <span>New character dossier</span>
         </button>
       </div>
 
       {/* Main Grid: Cast List & Detailed Multi-Tab Dossier */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left Column: Cast Roster */}
-        <div className="studio-card p-4 lg:col-span-1 space-y-2.5 max-h-[700px] overflow-y-auto">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Cast Roster</p>
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-3.5 lg:col-span-1 space-y-2 max-h-[700px] overflow-y-auto">
+          <p className="text-xs font-medium text-slate-400 mb-2 px-1">Cast roster</p>
           {characters.map((char) => {
             const isSel = char.id === selectedChar?.id;
             return (
               <button
                 key={char.id}
                 onClick={() => setSelectedCharId(char.id)}
-                className={`w-full text-left p-2.5 rounded-xl transition-all flex items-center gap-3 border ${
+                className={`w-full text-left p-2 rounded-lg transition-colors flex items-center gap-2.5 border ${
                   isSel
-                    ? 'bg-amber-500/10 border-amber-500/50 text-white'
-                    : 'hover:bg-[#161922] border-transparent text-slate-300'
+                    ? 'bg-[#1a1e28] border-white/10 text-white'
+                    : 'hover:bg-white/5 border-transparent text-slate-300'
                 }`}
               >
                 <img
                   src={char.avatar_url}
                   alt={char.name}
-                  className="w-10 h-10 rounded-full object-cover border border-[#2a3144] shrink-0"
+                  className="w-9 h-9 rounded-full object-cover border border-white/10 shrink-0"
                 />
                 <div className="min-w-0">
-                  <p className="text-xs font-bold truncate">{char.name}</p>
-                  <p className="text-[11px] text-amber-400 font-mono">{char.role} • Age: {char.age}</p>
-                  <p className="text-[10px] text-slate-500 truncate">Cast: {char.actor_name}</p>
+                  <p className="text-xs font-medium truncate">{char.name}</p>
+                  <p className="text-[10px] text-slate-400 font-mono">{char.role} • Age {char.age}</p>
+                  <p className="text-[10px] text-slate-500 truncate mt-0.5">{char.actor_name}</p>
                 </div>
               </button>
             );
@@ -222,84 +221,84 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
         </div>
 
         {/* Right Column: Active Character Multi-Tab Dossier */}
-        <div className="studio-card p-6 lg:col-span-3 space-y-6">
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-5 lg:col-span-3 space-y-5">
           {selectedChar ? (
             <div>
               {/* Dossier Header with Avatar, Actor link, and Role */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#1e2330]">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+                <div className="flex items-center gap-3.5">
                   <img
                     src={selectedChar.avatar_url}
                     alt={selectedChar.name}
-                    className="w-16 h-16 rounded-xl object-cover border-2 border-amber-500/30 shadow-md"
+                    className="w-14 h-14 rounded-xl object-cover border border-white/10 shadow-sm"
                   />
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-white tracking-tight">{selectedChar.name}</h3>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold border border-amber-500/30">
+                      <h3 className="text-base font-semibold text-white tracking-tight">{selectedChar.name}</h3>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-amber-400 border border-white/10">
                         {selectedChar.role}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Portrayed by: <span className="text-slate-200 font-semibold">{selectedChar.actor_name}</span> • Age: {selectedChar.age}
+                    <p className="text-xs text-slate-400 mt-1">
+                      Portrayed by <span className="text-slate-200 font-medium">{selectedChar.actor_name}</span> • Age {selectedChar.age}
                     </p>
                   </div>
                 </div>
 
                 {/* Dossier Tabs */}
-                <div className="flex bg-[#161922] p-1 rounded-lg border border-[#2a3144] text-xs font-semibold">
+                <div className="flex bg-[#151820] p-1 rounded-lg border border-white/5 text-xs font-medium">
                   <button
                     onClick={() => setActiveTab('bio')}
                     className={`px-3 py-1 rounded-md transition-colors ${
-                      activeTab === 'bio' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+                      activeTab === 'bio' ? 'bg-[#1a1e28] text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Bio & Traits
+                    Bio & traits
                   </button>
                   <button
                     onClick={() => setActiveTab('gallery')}
                     className={`px-3 py-1 rounded-md transition-colors ${
-                      activeTab === 'gallery' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+                      activeTab === 'gallery' ? 'bg-[#1a1e28] text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Visual Turnarounds ({selectedChar.gallery_images?.length || 0})
+                    Visual art ({selectedChar.gallery_images?.length || 0})
                   </button>
                   <button
                     onClick={() => setActiveTab('voice')}
                     className={`px-3 py-1 rounded-md transition-colors ${
-                      activeTab === 'voice' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+                      activeTab === 'voice' ? 'bg-[#1a1e28] text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Voice Archive ({selectedChar.voice_clips?.length || 0})
+                    Voice takes ({selectedChar.voice_clips?.length || 0})
                   </button>
                   <button
                     onClick={() => setActiveTab('matrix')}
                     className={`px-3 py-1 rounded-md transition-colors ${
-                      activeTab === 'matrix' ? 'bg-amber-500 text-black' : 'text-slate-300 hover:text-white'
+                      activeTab === 'matrix' ? 'bg-[#1a1e28] text-white shadow-sm border border-white/5' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    Mentions Matrix
+                    Mentions matrix
                   </button>
                 </div>
               </div>
 
               {/* Tab 1: Bio & Demographics */}
               {activeTab === 'bio' && (
-                <div className="space-y-5 pt-4">
+                <div className="space-y-4 pt-3">
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Backstory & Lore</h4>
-                    <p className="text-xs leading-relaxed text-slate-200 bg-[#0b0d13] p-4 rounded-xl border border-[#1e2330]">
+                    <h4 className="text-xs font-medium text-slate-400 mb-1.5">Backstory & lore</h4>
+                    <p className="text-xs leading-relaxed text-slate-200 bg-[#0a0b0e] p-3.5 rounded-lg border border-white/5 font-serif">
                       {selectedChar.backstory}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Personality Traits</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-xs font-medium text-slate-400 mb-1.5">Personality traits</h4>
+                    <div className="flex flex-wrap gap-1.5">
                       {selectedChar.personality_traits?.map((trait, i) => (
                         <span
                           key={i}
-                          className="px-2.5 py-1 rounded-md bg-[#161922] border border-[#2a3144] text-xs font-medium text-amber-300"
+                          className="px-2.5 py-1 rounded-md bg-white/5 border border-white/5 text-xs text-slate-300"
                         >
                           {trait}
                         </span>
@@ -308,15 +307,15 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                   </div>
 
                   {/* Linked Cast & Crew Member */}
-                  <div className="p-4 rounded-xl bg-[#0b0d13] border border-[#1e2330] flex items-center justify-between">
+                  <div className="p-3 rounded-lg bg-[#0a0b0e] border border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-                        <UserCheck size={18} />
+                      <div className="p-1.5 rounded-md bg-white/5 text-emerald-400 border border-white/5">
+                        <UserCheck size={16} />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-white">Linked Studio Cast Member</p>
-                        <p className="text-[11px] text-slate-400">
-                          Connected to registered team profile: <span className="text-slate-200 font-semibold">{selectedChar.actor_name}</span>
+                        <p className="text-xs font-medium text-white">Linked studio cast member</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Connected to registered team profile: <span className="text-slate-200 font-medium">{selectedChar.actor_name}</span>
                         </p>
                       </div>
                     </div>
@@ -326,22 +325,22 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
 
               {/* Tab 2: Visual Gallery & Turnarounds */}
               {activeTab === 'gallery' && (
-                <div className="space-y-4 pt-4">
+                <div className="space-y-4 pt-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-slate-400 font-medium">Character design turnaround sheets and costume variations</p>
+                    <p className="text-xs text-slate-400">Character design turnaround sheets and costume variations</p>
                     <button
                       onClick={() => setShowImageDialog(true)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/30 text-xs font-semibold hover:bg-amber-500/25"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 text-xs font-medium transition-colors"
                     >
                       <Plus size={13} />
-                      <span>Add Turnaround Art</span>
+                      <span>Add turnaround art</span>
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
                     {selectedChar.gallery_images?.map((item) => (
-                      <div key={item.id} className="rounded-xl overflow-hidden border border-[#2a3144] bg-[#0b0d13] group">
-                        <img src={item.url} alt={item.caption} className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div key={item.id} className="rounded-lg overflow-hidden border border-white/5 bg-[#0a0b0e] group">
+                        <img src={item.url} alt={item.caption} className="w-full h-40 object-cover group-hover:scale-102 transition-transform duration-200" />
                         <div className="p-2.5">
                           <p className="text-xs font-medium text-slate-200">{item.caption}</p>
                         </div>
@@ -349,7 +348,7 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                     ))}
                     {(!selectedChar.gallery_images || selectedChar.gallery_images.length === 0) && (
                       <div className="col-span-full py-12 text-center text-slate-500 text-xs">
-                        No reference art uploaded yet. Click "Add Turnaround Art" above.
+                        No reference art uploaded yet. Click "Add turnaround art" above.
                       </div>
                     )}
                   </div>
@@ -358,11 +357,11 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
 
               {/* Tab 3: Voice Archive & Microphone Audition Recorder */}
               {activeTab === 'voice' && (
-                <div className="space-y-5 pt-4">
-                  <div className="p-4 rounded-xl bg-[#0b0d13] border border-[#1e2330] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-4 pt-3">
+                  <div className="p-3.5 rounded-lg bg-[#0a0b0e] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <h4 className="text-xs font-bold text-white">Record In-Studio Voice Audition / Dialogue Take</h4>
-                      <p className="text-[11px] text-slate-400">Capture voice actor accents, emotion passes, and synthetic voice test clips</p>
+                      <h4 className="text-xs font-medium text-white">Record voice audition or dialogue take</h4>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Capture voice actor accents, emotion passes, and dialogue takes</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -373,47 +372,51 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                             placeholder="Clip label (e.g. Battle Cry)"
                             value={clipTitle}
                             onChange={(e) => setClipTitle(e.target.value)}
-                            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1 text-xs text-white outline-none w-40"
+                            className="bg-[#151820] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-slate-200 outline-none focus:border-white/20 w-40"
                           />
                           <button
                             onClick={startRecording}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-medium transition-colors"
                           >
                             <Mic size={13} />
-                            <span>Record Take</span>
+                            <span>Record take</span>
                           </button>
                         </>
                       )}
 
                       {recorderSnapshot.state === 'REQUESTING_MIC' && (
-                        <span className="text-xs text-amber-400 font-mono animate-pulse">Requesting mic...</span>
+                        <div className="flex items-center gap-2 text-xs text-amber-400 font-mono">
+                          <span className="w-2 h-2 rounded-full bg-amber-400" />
+                          <span>Requesting mic...</span>
+                        </div>
                       )}
 
                       {recorderSnapshot.state === 'RECORDING' && (
                         <button
                           onClick={stopRecording}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white font-bold text-xs animate-pulse"
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs transition-colors"
                         >
-                          <Square size={13} />
-                          <span>Stop & Review</span>
+                          <span className="w-2 h-2 rounded-full bg-white mr-0.5" />
+                          <Square size={12} />
+                          <span>Stop & review</span>
                         </button>
                       )}
 
                       {recorderSnapshot.state === 'REVIEWING' && (
-                        <div className="flex items-center gap-2 bg-[#161922] p-1 rounded-lg border border-[#2a3144]">
+                        <div className="flex items-center gap-2 bg-[#151820] p-1.5 rounded-lg border border-white/10">
                           {recorderSnapshot.context.audioUrl && (
                             <audio src={recorderSnapshot.context.audioUrl} controls className="h-6 w-36" />
                           )}
                           <button
                             onClick={saveAuditionTake}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+                            className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500 text-black text-xs font-medium hover:bg-amber-400"
                           >
                             <Check size={12} />
-                            <span>Save Clip</span>
+                            <span>Save take</span>
                           </button>
                           <button
                             onClick={() => sendRecorder({ type: 'DISCARD' })}
-                            className="p-1 rounded text-slate-400 hover:text-red-400"
+                            className="p-1 rounded text-slate-400 hover:text-rose-400 transition-colors"
                             title="Discard take"
                           >
                             <Trash2 size={13} />
@@ -422,8 +425,9 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                       )}
 
                       {recorderSnapshot.state === 'ERROR' && (
-                        <div className="flex items-center gap-1 text-xs text-red-400">
+                        <div className="flex items-center gap-1.5 text-xs text-rose-400">
                           <AlertTriangle size={13} />
+                          <span>{recorderSnapshot.context.errorMessage}</span>
                           <button
                             onClick={() => sendRecorder({ type: 'RESET' })}
                             className="p-1 text-slate-400 hover:text-white"
@@ -435,20 +439,20 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                     </div>
                   </div>
 
-                  <div className="space-y-2.5">
+                  <div className="space-y-2">
                     {selectedChar.voice_clips?.map((clip) => (
                       <div
                         key={clip.id}
-                        className="p-3 rounded-lg bg-[#0b0d13] border border-[#1e2330] flex items-center justify-between"
+                        className="p-2.5 rounded-lg bg-[#0a0b0e] border border-white/5 flex items-center justify-between"
                       >
-                        <div className="flex items-center gap-3">
-                          <Volume2 size={16} className="text-amber-400" />
+                        <div className="flex items-center gap-2.5">
+                          <Volume2 size={15} className="text-amber-400" />
                           <div>
-                            <p className="text-xs font-bold text-white">{clip.title}</p>
-                            <p className="text-[10px] text-slate-500 font-mono">Recorded: {clip.recordedAt}</p>
+                            <p className="text-xs font-medium text-white">{clip.title}</p>
+                            <p className="text-[10px] text-slate-500 font-mono">Recorded {clip.recordedAt}</p>
                           </div>
                         </div>
-                        <audio src={clip.audioUrl} controls className="h-7 w-56" />
+                        <audio src={clip.audioUrl} controls className="h-7 w-52" />
                       </div>
                     ))}
                     {(!selectedChar.voice_clips || selectedChar.voice_clips.length === 0) && (
@@ -462,29 +466,29 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
 
               {/* Tab 4: Global Mentions Matrix */}
               {activeTab === 'matrix' && (
-                <div className="space-y-5 pt-4">
+                <div className="space-y-4 pt-3">
                   <p className="text-xs text-slate-400">
-                    Cross-studio intelligence automatically scanning all screenplay scenes, Kanban production tasks, storyboards, and chat logs for <strong className="text-amber-400">{selectedChar.name}</strong>:
+                    Cross-studio intelligence scanning screenplay scenes, tasks, storyboards, and chats for <strong className="text-slate-200">{selectedChar.name}</strong>:
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {/* Screenplay Scenes Matrix */}
-                    <div className="p-4 rounded-xl bg-[#0b0d13] border border-[#1e2330] space-y-2.5">
-                      <div className="flex items-center justify-between pb-1.5 border-b border-[#1e2330]">
-                        <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                          <Film size={14} className="text-amber-400" />
-                          <span>Screenplay Scenes</span>
+                    <div className="p-3.5 rounded-lg bg-[#0a0b0e] border border-white/5 space-y-2">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-white/5">
+                        <span className="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                          <Film size={14} className="text-slate-400" />
+                          <span>Screenplay scenes</span>
                         </span>
-                        <span className="text-[10px] font-mono text-amber-400">{mentionsMatrix.scenes.length}</span>
+                        <span className="text-[10px] font-mono text-slate-400 tabular-nums">{mentionsMatrix.scenes.length}</span>
                       </div>
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                      <div className="space-y-1 max-h-48 overflow-y-auto">
                         {mentionsMatrix.scenes.map((s) => (
                           <div
                             key={s.id}
                             onClick={() => onNavigateToScene && onNavigateToScene(s.id)}
-                            className="p-2 rounded bg-[#161922] hover:bg-[#202534] cursor-pointer text-xs flex items-center justify-between"
+                            className="p-2 rounded bg-[#151820] hover:bg-[#1a1e28] cursor-pointer text-xs flex items-center justify-between transition-colors"
                           >
-                            <span className="font-mono text-[11px] truncate">#{s.scene_number} {s.slugline}</span>
+                            <span className="font-mono text-[11px] truncate text-slate-300">#{s.scene_number} {s.slugline}</span>
                             <ExternalLink size={12} className="text-slate-500 shrink-0 ml-1" />
                           </div>
                         ))}
@@ -492,23 +496,23 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                     </div>
 
                     {/* Kanban Production Tasks Matrix */}
-                    <div className="p-4 rounded-xl bg-[#0b0d13] border border-[#1e2330] space-y-2.5">
-                      <div className="flex items-center justify-between pb-1.5 border-b border-[#1e2330]">
-                        <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                          <CheckSquare size={14} className="text-sky-400" />
-                          <span>Assigned Tasks</span>
+                    <div className="p-3.5 rounded-lg bg-[#0a0b0e] border border-white/5 space-y-2">
+                      <div className="flex items-center justify-between pb-1.5 border-b border-white/5">
+                        <span className="text-xs font-medium text-slate-200 flex items-center gap-1.5">
+                          <CheckSquare size={14} className="text-slate-400" />
+                          <span>Assigned tasks</span>
                         </span>
-                        <span className="text-[10px] font-mono text-sky-400">{mentionsMatrix.tasks.length}</span>
+                        <span className="text-[10px] font-mono text-slate-400 tabular-nums">{mentionsMatrix.tasks.length}</span>
                       </div>
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                      <div className="space-y-1 max-h-48 overflow-y-auto">
                         {mentionsMatrix.tasks.map((t) => (
                           <div
                             key={t.id}
                             onClick={() => onNavigateToTask && onNavigateToTask(t.id)}
-                            className="p-2 rounded bg-[#161922] hover:bg-[#202534] cursor-pointer text-xs flex items-center justify-between"
+                            className="p-2 rounded bg-[#151820] hover:bg-[#1a1e28] cursor-pointer text-xs flex items-center justify-between transition-colors"
                           >
-                            <span className="truncate">{t.title}</span>
-                            <span className="text-[9px] px-1.5 py-0.5 rounded uppercase font-bold bg-[#2a3144] text-slate-300">
+                            <span className="truncate text-slate-300">{t.title}</span>
+                            <span className="text-[9px] px-1.5 py-0.5 rounded uppercase font-mono bg-white/5 text-slate-400 border border-white/5">
                               {t.column_id}
                             </span>
                           </div>
@@ -527,9 +531,9 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
 
       {/* Add Turnaround Image Dialog */}
       {showImageDialog && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-          <div className="bg-[#0f1117] border border-[#2a3144] rounded-xl p-5 max-w-md w-full space-y-4">
-            <h3 className="text-sm font-bold text-white">Add Character Turnaround Art</h3>
+        <div className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-[#101217] border border-white/10 rounded-xl p-5 max-w-md w-full space-y-4">
+            <h3 className="text-sm font-semibold text-white">Add turnaround art</h3>
             <div className="space-y-2.5">
               <div>
                 <label className="text-[11px] text-slate-400">Image URL:</label>
@@ -538,7 +542,7 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                   placeholder="https://..."
                   value={newImageUrl}
                   onChange={(e) => setNewImageUrl(e.target.value)}
-                  className="w-full bg-[#161922] border border-[#2a3144] rounded-lg p-2 text-xs text-white outline-none mt-1"
+                  className="w-full bg-[#151820] border border-white/10 rounded-lg p-2 text-xs text-white outline-none mt-1 focus:border-white/20"
                 />
               </div>
               <div>
@@ -548,22 +552,22 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                   placeholder="e.g. EVA Pressure Suit Turnaround"
                   value={newImageCaption}
                   onChange={(e) => setNewImageCaption(e.target.value)}
-                  className="w-full bg-[#161922] border border-[#2a3144] rounded-lg p-2 text-xs text-white outline-none mt-1"
+                  className="w-full bg-[#151820] border border-white/10 rounded-lg p-2 text-xs text-white outline-none mt-1 focus:border-white/20"
                 />
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
                 onClick={() => setShowImageDialog(false)}
-                className="px-3 py-1.5 rounded-lg bg-[#161922] text-slate-300 text-xs"
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={addGalleryImage}
-                className="px-4 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold"
+                className="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-medium transition-colors"
               >
-                Save to Gallery
+                Save to gallery
               </button>
             </div>
           </div>

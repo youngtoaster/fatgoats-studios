@@ -79,67 +79,67 @@ export const ScriptAnalytics: React.FC<ScriptAnalyticsProps> = ({
   }, [scenes, characters]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-[#0f1117] border border-[#1e2330] rounded-xl">
+      <div className="flex items-center justify-between p-4 bg-[#101217] border border-white/5 rounded-xl">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToEditor}
-            className="p-2 rounded-lg bg-[#161922] hover:bg-[#202534] text-slate-300 hover:text-white border border-[#2a3144]"
+            className="p-2 rounded-lg bg-[#151820] hover:bg-[#1a1e28] text-slate-300 hover:text-white border border-white/10 transition-colors"
           >
             <ArrowLeft size={16} />
           </button>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Script Analytics & Screen-Time Metrics</h2>
-            <p className="text-xs text-slate-400">Dialogue frequency, character speaking share & script pacing distribution</p>
+            <h2 className="text-base font-semibold text-white tracking-tight">Script analytics</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Dialogue frequency, character speaking share, and script pacing metrics</p>
           </div>
         </div>
       </div>
 
       {/* KPI Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="studio-card p-4">
-          <p className="text-[11px] text-slate-400 font-medium">Estimated Script Pages</p>
-          <p className="text-2xl font-black text-amber-400 mt-1">{analytics.totalPages.toFixed(1)}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-4">
+          <p className="text-[11px] text-slate-400 font-medium">Estimated script pages</p>
+          <p className="text-2xl font-semibold text-white mt-1 tabular-nums">{analytics.totalPages.toFixed(1)}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">~{Math.round(analytics.totalPages * 1.0)} screen minutes</p>
         </div>
-        <div className="studio-card p-4">
-          <p className="text-[11px] text-slate-400 font-medium">Total Word Count</p>
-          <p className="text-2xl font-black text-white mt-1">{analytics.totalWords.toLocaleString()}</p>
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-4">
+          <p className="text-[11px] text-slate-400 font-medium">Total word count</p>
+          <p className="text-2xl font-semibold text-white mt-1 tabular-nums">{analytics.totalWords.toLocaleString()}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Across {analytics.totalScenes} scenes</p>
         </div>
-        <div className="studio-card p-4">
-          <p className="text-[11px] text-slate-400 font-medium">Dialogue Exchanges</p>
-          <p className="text-2xl font-black text-emerald-400 mt-1">{analytics.totalDialogueLines}</p>
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-4">
+          <p className="text-[11px] text-slate-400 font-medium">Dialogue exchanges</p>
+          <p className="text-2xl font-semibold text-white mt-1 tabular-nums">{analytics.totalDialogueLines}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Spoken line blocks</p>
         </div>
-        <div className="studio-card p-4">
-          <p className="text-[11px] text-slate-400 font-medium">Active Speaking Cast</p>
-          <p className="text-2xl font-black text-sky-400 mt-1">{analytics.characterRanks.length}</p>
+        <div className="bg-[#101217] border border-white/5 rounded-xl p-4">
+          <p className="text-[11px] text-slate-400 font-medium">Active speaking cast</p>
+          <p className="text-2xl font-semibold text-white mt-1 tabular-nums">{analytics.characterRanks.length}</p>
           <p className="text-[10px] text-slate-500 mt-0.5">Identified speakers</p>
         </div>
       </div>
 
       {/* Speaking Share Distribution Table */}
-      <div className="studio-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-white">Cast Screen-Time & Line Share</h3>
-          <span className="text-[10px] text-slate-400 font-mono">Relative Dialogue %</span>
+      <div className="bg-[#101217] border border-white/5 rounded-xl p-4 space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-white/5">
+          <h3 className="text-xs font-medium text-slate-300">Cast line share</h3>
+          <span className="text-[10px] text-slate-500 font-mono">Dialogue %</span>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-2.5">
           {analytics.characterRanks.map((char) => (
-            <div key={char.name} className="p-3 rounded-lg bg-[#0b0d13] border border-[#1e2330]">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="font-bold text-slate-200">{char.name}</span>
+            <div key={char.name} className="p-3 rounded-lg bg-[#0a0b0e] border border-white/5 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-slate-200">{char.name}</span>
                 <div className="flex items-center gap-3">
                   <span className="text-[11px] text-slate-400">
                     {char.lines} lines • {char.words} words • {char.scenesCount} scenes
                   </span>
-                  <span className="font-mono font-bold text-amber-400">{char.percentage}%</span>
+                  <span className="font-mono text-xs font-medium text-amber-400 tabular-nums">{char.percentage}%</span>
                 </div>
               </div>
-              <div className="w-full h-2 rounded-full bg-[#161922] overflow-hidden">
+              <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-amber-500"
                   style={{ width: `${char.percentage}%` }}

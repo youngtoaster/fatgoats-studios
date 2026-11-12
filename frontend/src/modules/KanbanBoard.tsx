@@ -36,12 +36,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   const [selectedAssignee, setSelectedAssignee] = useState<string>('all');
   const [selectedEpisode, setSelectedEpisode] = useState<string>('all');
 
-  const columns: Array<{ id: KanbanTask['column_id']; title: string; color: string }> = [
-    { id: 'backlog', title: 'Backlog', color: 'border-slate-500' },
-    { id: 'scripting', title: 'In Scripting', color: 'border-amber-500' },
-    { id: 'animation', title: 'Animation & VFX', color: 'border-sky-500' },
-    { id: 'review', title: 'Review & Dailies', color: 'border-purple-500' },
-    { id: 'approved', title: 'Approved', color: 'border-emerald-500' },
+  const columns: Array<{ id: KanbanTask['column_id']; title: string }> = [
+    { id: 'backlog', title: 'Backlog' },
+    { id: 'scripting', title: 'In scripting' },
+    { id: 'animation', title: 'Animation & VFX' },
+    { id: 'review', title: 'Review & dailies' },
+    { id: 'approved', title: 'Approved' },
   ];
 
   // Filtering
@@ -57,12 +57,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     const diffDays = Math.ceil((target - now) / (1000 * 3600 * 24));
 
     if (diffDays < 0) {
-      return { label: `Overdue (${Math.abs(diffDays)}d)`, color: 'text-red-400 bg-red-950/40 border-red-500/30' };
+      return { label: `Overdue (${Math.abs(diffDays)}d)`, color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' };
     }
     if (diffDays <= 3) {
-      return { label: `Due soon (${diffDays}d)`, color: 'text-amber-400 bg-amber-950/40 border-amber-500/30' };
+      return { label: `Due soon (${diffDays}d)`, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' };
     }
-    return { label: dueDate, color: 'text-slate-400 bg-[#161922] border-[#2a3144]' };
+    return { label: dueDate, color: 'text-slate-400 bg-white/5 border-white/5' };
   };
 
   // State Machine transition executor
@@ -80,19 +80,19 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   return (
     <div className="space-y-4">
       {/* Top Header & Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0f1117] border border-[#1e2330] p-4 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#101217] border border-white/5 p-4 rounded-xl">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <CheckSquare size={20} />
+          <div className="p-2 rounded-lg bg-[#151820] text-slate-400 border border-white/5">
+            <CheckSquare size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white tracking-tight">Tasks & Production Kanban</h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-purple-400 border border-[#2a3144]">
-                Guarded FSM Engine
+              <h2 className="text-base font-semibold text-white tracking-tight">Production kanban</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#151820] text-slate-400 border border-white/5">
+                Guarded FSM
               </span>
             </div>
-            <p className="text-xs text-slate-400">Pipeline workflows, character assignment tags, and deadline warnings</p>
+            <p className="text-xs text-slate-400 mt-0.5">Pipeline workflows, character assignment tags, and deadline warnings</p>
           </div>
         </div>
 
@@ -101,9 +101,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
           <select
             value={selectedAssignee}
             onChange={(e) => setSelectedAssignee(e.target.value)}
-            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"
+            className="bg-[#151820] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-white/20"
           >
-            <option value="all">All Assignees</option>
+            <option value="all">All assignees</option>
             {state.team_members.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
@@ -115,9 +115,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
           <select
             value={selectedEpisode}
             onChange={(e) => setSelectedEpisode(e.target.value)}
-            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"
+            className="bg-[#151820] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none focus:border-white/20"
           >
-            <option value="all">All Episodes</option>
+            <option value="all">All episodes</option>
             {state.episodes.map((ep) => (
               <option key={ep.id} value={ep.id}>
                 E{ep.episode_number}: {ep.title}
@@ -127,37 +127,36 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
           <button
             onClick={() => onCreateTask('backlog')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-medium text-xs transition-colors"
           >
             <Plus size={14} />
-            <span>Add Task</span>
+            <span>Add task</span>
           </button>
         </div>
       </div>
 
       {/* Kanban 5-Column Board */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto min-h-[600px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3.5 overflow-x-auto min-h-[600px]">
         {columns.map((col) => {
           const colTasks = filteredTasks.filter((t) => t.column_id === col.id);
 
           return (
             <div
               key={col.id}
-              className="studio-card p-3 flex flex-col justify-between bg-[#0b0d13] border-t-2"
-              style={{ borderTopColor: col.color.replace('border-', '') }}
+              className="bg-[#101217] border border-white/5 rounded-xl p-3 flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#1e2330]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/5">
+                  <span className="text-xs font-medium text-slate-300">
                     {col.title}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161922] text-slate-400 font-bold border border-[#2a3144]">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#151820] text-slate-400 border border-white/5 tabular-nums">
                     {colTasks.length}
                   </span>
                 </div>
 
                 {/* Task Cards in this column */}
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {colTasks.map((task) => {
                     const deadline = getDeadlineStatus(task.due_date);
                     const taggedChars = state.characters.filter((c) =>
@@ -172,17 +171,17 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                     return (
                       <div
                         key={task.id}
-                        className="p-3 rounded-xl bg-[#0f1117] border border-[#1e2330] hover:border-[#2e374d] transition-all space-y-2.5 shadow-sm"
+                        className="p-3 rounded-lg bg-[#151820] border border-white/5 hover:border-white/15 transition-colors space-y-2.5"
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-xs font-bold text-white leading-snug">{task.title}</h4>
+                          <h4 className="text-xs font-medium text-white leading-snug">{task.title}</h4>
                           <span
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded font-mono uppercase ${
+                            className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
                               task.priority === 'Urgent'
-                                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                                 : task.priority === 'High'
-                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                : 'bg-[#161922] text-slate-400 border border-[#2a3144]'
+                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                : 'bg-white/5 text-slate-400 border border-white/5'
                             }`}
                           >
                             {task.priority}
@@ -195,7 +194,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
                         {/* Character Dossier Tagging */}
                         {taggedChars.length > 0 && (
-                          <div className="flex items-center gap-1.5 pt-1">
+                          <div className="flex items-center gap-1.5 pt-0.5">
                             <span className="text-[10px] text-slate-500">Cast:</span>
                             {taggedChars.map((tc) => (
                               <img
@@ -203,14 +202,14 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                                 src={tc.avatar_url}
                                 alt={tc.name}
                                 title={`${tc.name} (${tc.role})`}
-                                className="w-5 h-5 rounded-full object-cover border border-amber-500/40"
+                                className="w-5 h-5 rounded-full object-cover border border-white/10"
                               />
                             ))}
                           </div>
                         )}
 
                         {/* Deadline notice & Assignee */}
-                        <div className="flex items-center justify-between pt-2 border-t border-[#1e2330] text-[10px]">
+                        <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[10px]">
                           <span className={`px-2 py-0.5 rounded font-mono border ${deadline.color}`}>
                             {deadline.label}
                           </span>
@@ -220,11 +219,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                         </div>
 
                         {/* Guarded Pipeline Machine Transitions */}
-                        <div className="pt-2 border-t border-[#1e2330]/70 flex flex-wrap items-center justify-between gap-1 text-[10px]">
+                        <div className="pt-2 border-t border-white/5 flex flex-wrap items-center justify-between gap-1 text-[10px]">
                           <button
                             onClick={() => onDeleteTask(task.id)}
-                            className="p-1 text-slate-500 hover:text-red-400 rounded"
-                            title="Delete Task"
+                            className="p-1 text-slate-500 hover:text-rose-400 rounded transition-colors"
+                            title="Delete task"
                           >
                             <Trash2 size={12} />
                           </button>
@@ -242,11 +241,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                               const getActionLabel = (e: string) => {
                                 switch (e) {
                                   case 'START_SCRIPTING':
-                                    return 'Start Scripting';
+                                    return 'Start scripting';
                                   case 'SEND_TO_ANIMATION':
-                                    return 'To Animation';
+                                    return 'To animation';
                                   case 'SUBMIT_FOR_REVIEW':
-                                    return 'Submit Review';
+                                    return 'Submit review';
                                   case 'APPROVE_TASK':
                                     return 'Approve';
                                   case 'REQUEST_REWORK':
@@ -262,12 +261,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                                 <button
                                   key={evt}
                                   onClick={() => handleTransition(task, { type: evt as any })}
-                                  className={`px-2 py-0.5 rounded text-[9px] font-semibold flex items-center gap-0.5 transition-colors ${
+                                  className={`px-2 py-0.5 rounded text-[9px] font-medium flex items-center gap-0.5 transition-colors ${
                                     isForward
                                       ? evt === 'APPROVE_TASK'
-                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
-                                        : 'bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25'
-                                      : 'bg-[#161922] text-slate-400 border border-[#2a3144] hover:text-slate-200'
+                                        ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/20'
+                                        : 'bg-amber-500/10 text-amber-300 border border-amber-500/20 hover:bg-amber-500/20'
+                                      : 'bg-white/5 text-slate-400 border border-white/5 hover:text-slate-200'
                                   }`}
                                   title={`Transition task via FSM: ${evt}`}
                                 >
@@ -295,10 +294,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
               {/* Add card button at column bottom */}
               <button
                 onClick={() => onCreateTask(col.id)}
-                className="mt-3 w-full py-1.5 rounded-lg border border-dashed border-[#2a3144] hover:border-amber-500/50 text-[11px] text-slate-400 hover:text-amber-400 font-medium transition-colors flex items-center justify-center gap-1"
+                className="mt-3 w-full py-1.5 rounded-lg border border-dashed border-white/10 hover:border-amber-500/40 text-[11px] text-slate-400 hover:text-amber-400 font-medium transition-colors flex items-center justify-center gap-1"
               >
                 <Plus size={12} />
-                <span>Add Card</span>
+                <span>Add card</span>
               </button>
             </div>
           );

@@ -2,21 +2,21 @@
 
 @layer base {
   :root {
-    --bg-primary: #08090e;
-    --bg-surface: #0f1117;
-    --bg-elevated: #161922;
-    --bg-active: #202534;
-    --border-subtle: #1e2330;
-    --border-strong: #2a3144;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent-gold: #f59e0b;
-    --accent-gold-hover: #d97706;
-    --accent-gold-subtle: rgba(245, 158, 11, 0.12);
-    --danger-red: #ef4444;
-    --success-green: #10b981;
-    --info-blue: #38bdf8;
+    --bg-primary: #0a0b0e;
+    --bg-surface: #101217;
+    --bg-elevated: #151820;
+    --bg-active: #1e222d;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    --text-primary: #ededed;
+    --text-secondary: #9ea3ae;
+    --text-muted: #6a7182;
+    --accent: #f59e0b;
+    --accent-hover: #d97706;
+    --accent-subtle: rgba(245, 158, 11, 0.10);
+    --accent-fg: #0a0b0e;
+    --danger: #e5484d;
+    --success: #4cc38a;
   }
 
   body {
@@ -33,43 +33,43 @@
   /* Screenplay Fountain Standard Typography */
   .font-screenplay {
     font-family: "Courier Prime", "Courier New", Courier, monospace;
-    letter-spacing: 0.02em;
-    line-height: 1.5;
+    letter-spacing: 0.01em;
+    line-height: 1.6;
   }
 }
 
-/* Custom Studio Scrollbar */
+/* Studio Precision Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0d13;
+  background: #0a0b0e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #232938;
+  background: #1e2330;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #343d54;
+  background: #2a3144;
 }
 
-/* Subtle Slate Glass */
-.studio-glass {
-  background: rgba(15, 17, 23, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
+/* Studio Standard Card & Panel Surfaces (Carbon Ink Ramp) */
 .studio-card {
-  background: #0f1117;
-  border: 1px solid #1e2330;
-  border-radius: 8px;
+  background: #101217;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
 }
 
 .studio-card:hover {
-  border-color: #2a3144;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.studio-panel {
+  background: #0d0f14;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
 }

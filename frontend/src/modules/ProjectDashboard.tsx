@@ -12,10 +12,8 @@ import {
   Plus,
   ArrowRight,
   TrendingUp,
-  AlertCircle,
   Database,
   Calendar,
-  Sparkles,
 } from 'lucide-react';
 import { Project, StudioDatabaseState } from '../types';
 
@@ -64,58 +62,58 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   };
 
   const kpis = [
-    { label: 'Total Episodes', value: projectEpisodes.length, sub: 'In pipeline', icon: Film, color: 'text-amber-400' },
-    { label: 'Scenes Written', value: projectScenes.length, sub: 'Fountain formatted', icon: FileText, color: 'text-emerald-400' },
-    { label: 'Active Cast & Crew', value: projectCharacters.length, sub: 'Dossiers linked', icon: Users2, color: 'text-sky-400' },
-    { label: 'Open Production Tasks', value: openTasks.length, sub: `${projectTasks.length - openTasks.length} approved`, icon: CheckSquare, color: 'text-purple-400' },
-    { label: 'Vault Assets', value: projectAssets.length, sub: 'Art, audio & models', icon: FolderArchive, color: 'text-rose-400' },
+    { label: 'Episodes', value: projectEpisodes.length, sub: 'In pipeline', icon: Film },
+    { label: 'Scenes written', value: projectScenes.length, sub: 'Fountain format', icon: FileText },
+    { label: 'Cast & characters', value: projectCharacters.length, sub: 'Dossiers active', icon: Users2 },
+    { label: 'Open tasks', value: openTasks.length, sub: `${projectTasks.length - openTasks.length} approved`, icon: CheckSquare },
+    { label: 'Vault assets', value: projectAssets.length, sub: 'Art, audio, models', icon: FolderArchive },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Top Banner / Mission Control Header */}
-      <div className="relative rounded-xl border border-[#1e2330] bg-gradient-to-r from-[#12151e] via-[#0f1117] to-[#141822] p-6 overflow-hidden shadow-lg">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Banner / Project Overview */}
+      <div className="studio-card p-6 border border-[rgba(255,255,255,0.07)]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                Active Production Workspace
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20">
+                Active production
               </span>
               <span className="text-xs text-slate-400">• Release: {project.target_release}</span>
             </div>
-            <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">{project.title}</h1>
-            <p className="text-xs lg:text-sm text-slate-300 max-w-2xl mt-1 leading-relaxed">{project.description}</p>
+            <h1 className="text-xl lg:text-2xl font-medium text-white tracking-tight">{project.title}</h1>
+            <p className="text-xs text-slate-300 max-w-2xl mt-1 leading-relaxed">{project.description}</p>
           </div>
 
           {/* Quick-Access Action Bar */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => onNavigate('scripts')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-medium text-xs transition-colors"
             >
-              <Plus size={15} />
-              <span>Write Scene</span>
+              <Plus size={14} />
+              <span>Write scene</span>
             </button>
             <button
               onClick={() => onNavigate('characters')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1a1f2c] hover:bg-[#232a3b] border border-[#2a3144] text-slate-200 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-slate-200 text-xs font-medium transition-colors"
             >
-              <Users2 size={15} className="text-sky-400" />
-              <span>New Cast Dossier</span>
+              <Users2 size={14} className="text-slate-400" />
+              <span>Cast dossier</span>
             </button>
             <button
               onClick={() => onNavigate('whiteboard')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1a1f2c] hover:bg-[#232a3b] border border-[#2a3144] text-slate-200 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-slate-200 text-xs font-medium transition-colors"
             >
-              <Sparkles size={15} className="text-amber-400" />
-              <span>Whiteboard Beats</span>
+              <Film size={14} className="text-slate-400" />
+              <span>Whiteboard</span>
             </button>
             <button
               onClick={() => onNavigate('chat')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1a1f2c] hover:bg-[#232a3b] border border-[#2a3144] text-slate-200 text-xs font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#151820] hover:bg-[#1e222d] border border-[rgba(255,255,255,0.08)] text-slate-200 text-xs font-medium transition-colors"
             >
-              <Play size={14} className="text-emerald-400" />
-              <span>Room Chat</span>
+              <Play size={13} className="text-slate-400" />
+              <span>Room chat</span>
             </button>
           </div>
         </div>
@@ -128,70 +126,70 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
           return (
             <div
               key={kpi.label}
-              className="studio-card p-4 flex flex-col justify-between hover:border-[#2e374d] transition-all"
+              className="studio-card p-4 flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-medium text-slate-400">{kpi.label}</span>
-                <Icon size={16} className={kpi.color} />
+                <span className="text-xs text-slate-400">{kpi.label}</span>
+                <Icon size={15} className="text-slate-400" />
               </div>
               <div>
-                <p className="text-2xl font-black text-white">{kpi.value}</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">{kpi.sub}</p>
+                <p className="text-2xl font-medium tabular-nums text-white">{kpi.value}</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">{kpi.sub}</p>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Grid: Embargo Time-Lock Countdown & Episode Completion Progress */}
+      {/* Grid: Embargo Countdown & Episode Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Time-Lock Countdown Tracker */}
         <div className="studio-card p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Clock size={16} />
+              <div className="p-1.5 rounded-md bg-[#151820] text-slate-400 border border-[rgba(255,255,255,0.07)]">
+                <Clock size={15} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">Spoiler & Embargo Time-Lock Tracker</h3>
+                <h3 className="text-sm font-medium text-white">Scene embargo tracker</h3>
                 <p className="text-[11px] text-slate-400">Confidential script scenes sealed under future timestamps</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#161922] text-amber-400 border border-[#2a3144]">
-              {lockedScenes.length} Active Embargo{lockedScenes.length === 1 ? '' : 's'}
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#151820] text-amber-400 border border-[rgba(255,255,255,0.08)]">
+              {lockedScenes.length} locked
             </span>
           </div>
 
           {lockedScenes.length === 0 ? (
-            <div className="p-6 rounded-lg bg-[#0b0d13] border border-[#1a1f2c] text-center">
-              <Unlock size={24} className="mx-auto text-emerald-400 mb-2 opacity-80" />
-              <p className="text-xs font-semibold text-slate-300">All screenplay scenes currently unlocked</p>
+            <div className="p-6 rounded-lg bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)] text-center">
+              <Unlock size={20} className="mx-auto text-slate-400 mb-2" />
+              <p className="text-xs font-medium text-slate-300">All screenplay scenes unlocked</p>
               <p className="text-[11px] text-slate-400 mt-0.5">Writers can set confidential embargo dates inside the Script Editor.</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {lockedScenes.map((scene) => (
                 <div
                   key={scene.id}
-                  className="p-3.5 rounded-lg bg-[#0b0d13] border border-amber-500/30 flex items-center justify-between"
+                  className="p-3 rounded-lg bg-[#0a0b0e] border border-[rgba(255,255,255,0.08)] flex items-center justify-between"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded bg-amber-500/10 text-amber-400 mt-0.5">
-                      <Lock size={15} />
+                    <div className="p-1.5 rounded bg-[#151820] text-amber-400 mt-0.5">
+                      <Lock size={14} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-white">{scene.slugline}</p>
+                      <p className="text-xs font-medium text-white font-mono">{scene.slugline}</p>
                       <p className="text-[11px] text-slate-400">Scene #{scene.scene_number} • {scene.location}</p>
-                      <p className="text-[10px] text-amber-400/90 mt-1 font-mono">
-                        Embargo unlocks on: {new Date(scene.locked_until!).toLocaleString()}
+                      <p className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                        Unlocks: {new Date(scene.locked_until!).toLocaleString()}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-mono text-base font-bold text-amber-400 tracking-wider">
+                    <div className="font-mono text-sm font-medium text-amber-400 tabular-nums">
                       {formatCountdown(scene.locked_until!)}
                     </div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-400">Time Left</span>
+                    <span className="text-[10px] text-slate-400">Time left</span>
                   </div>
                 </div>
               ))}
@@ -199,118 +197,112 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
           )}
         </div>
 
-        {/* Season & Episode Status Bars */}
+        {/* Season & Episode Progress */}
         <div className="studio-card p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <TrendingUp size={16} />
+              <div className="p-1.5 rounded-md bg-[#151820] text-slate-400 border border-[rgba(255,255,255,0.07)]">
+                <TrendingUp size={15} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">Season & Episode Progress</h3>
-                <p className="text-[11px] text-slate-400">Visual completion meters for season arc production</p>
+                <h3 className="text-sm font-medium text-white">Episode progress</h3>
+                <p className="text-[11px] text-slate-400">Completion tracking across active season episodes</p>
               </div>
             </div>
             <button
               onClick={() => onNavigate('scripts')}
               className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-medium"
             >
-              <span>View Scripts</span>
+              <span>View scripts</span>
               <ArrowRight size={13} />
             </button>
           </div>
 
-          <div className="space-y-3.5">
+          <div className="space-y-3">
             {projectEpisodes.map((ep) => (
-              <div key={ep.id} className="p-3 rounded-lg bg-[#0b0d13] border border-[#1e2330]">
+              <div key={ep.id} className="p-3 rounded-lg bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)]">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#161922] text-slate-300 font-bold border border-[#2a3144]">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#151820] text-slate-300 font-medium">
                       E{ep.episode_number}
                     </span>
-                    <span className="text-xs font-semibold text-slate-200">{ep.title}</span>
+                    <span className="text-xs font-medium text-slate-200">{ep.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-[#161922] text-amber-400 border border-[#2a3144]">
+                    <span className="text-[10px] px-2 py-0.5 rounded font-mono text-slate-400 bg-[#151820]">
                       {ep.status}
                     </span>
-                    <span className="text-xs font-mono font-bold text-white">{ep.progress_pct}%</span>
+                    <span className="text-xs font-mono tabular-nums text-white">{ep.progress_pct}%</span>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full h-2 rounded-full bg-[#161922] overflow-hidden">
+                <div className="w-full h-1.5 rounded bg-[#151820] overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      ep.progress_pct === 100
-                        ? 'bg-emerald-500'
-                        : ep.progress_pct > 50
-                        ? 'bg-amber-500'
-                        : 'bg-sky-500'
-                    }`}
+                    className="h-full rounded bg-amber-500 transition-all duration-300"
                     style={{ width: `${ep.progress_pct}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1.5 line-clamp-1">{ep.synopsis}</p>
+                <p className="text-[11px] text-slate-400 mt-1.5 line-clamp-1">{ep.synopsis}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Bottom Row: Connection Status & Recent Studio Activity */}
+      {/* Bottom Row: Connection Status & Activity Stream */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Storage & Sync Status Indicator Card */}
+        {/* Persistence Engine */}
         <div className="studio-card p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Database size={16} className="text-emerald-400" />
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Persistence Engine</h4>
+            <Database size={15} className="text-slate-400" />
+            <h4 className="text-xs font-medium text-white">Persistence engine</h4>
           </div>
-          <div className="space-y-2.5 text-xs">
-            <div className="flex items-center justify-between p-2.5 rounded bg-[#0b0d13] border border-[#1e2330]">
-              <span className="text-slate-400">Backend Engine</span>
-              <span className="font-semibold text-white">Rust (Axum + Tokio)</span>
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center justify-between p-2 rounded bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)]">
+              <span className="text-slate-400">Backend engine</span>
+              <span className="font-medium text-white">Rust (Axum + Tokio)</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded bg-[#0b0d13] border border-[#1e2330]">
-              <span className="text-slate-400">Database Driver</span>
-              <span className="font-semibold text-white">SQLite3 (Relational)</span>
+            <div className="flex items-center justify-between p-2 rounded bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)]">
+              <span className="text-slate-400">Database driver</span>
+              <span className="font-medium text-white">SQLite3 relational</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded bg-[#0b0d13] border border-[#1e2330]">
-              <span className="text-slate-400">Network Sync</span>
-              <span className={`font-semibold ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {isOnline ? 'Active Realtime' : 'Offline Backlog Queue'}
+            <div className="flex items-center justify-between p-2 rounded bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)]">
+              <span className="text-slate-400">Network sync</span>
+              <span className={`font-medium ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {isOnline ? 'Realtime' : 'Offline backlog'}
               </span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded bg-[#0b0d13] border border-[#1e2330]">
-              <span className="text-slate-400">Pending Backlog Items</span>
-              <span className="font-mono font-bold text-amber-400">{backlogCount} mutations</span>
+            <div className="flex items-center justify-between p-2 rounded bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)]">
+              <span className="text-slate-400">Pending mutations</span>
+              <span className="font-mono font-medium text-amber-400 tabular-nums">{backlogCount}</span>
             </div>
           </div>
         </div>
 
-        {/* Recent Studio Audit Stream */}
+        {/* Activity Stream */}
         <div className="lg:col-span-2 studio-card p-5">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Chronological Activity Stream</h4>
-            <span className="text-[10px] text-slate-400 font-mono">Real-time production audit</span>
+            <h4 className="text-xs font-medium text-white">Activity stream</h4>
+            <span className="text-[11px] text-slate-400 font-mono">Recent audit</span>
           </div>
 
           <div className="space-y-2">
             {state.audit_logs.slice(0, 4).map((log) => (
               <div
                 key={log.id}
-                className="p-2.5 rounded-lg bg-[#0b0d13] border border-[#1e2330] flex items-center justify-between text-xs"
+                className="p-2.5 rounded-lg bg-[#0a0b0e] border border-[rgba(255,255,255,0.06)] flex items-center justify-between text-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded text-slate-400 bg-[#151820]">
                     {log.action_type}
                   </span>
                   <div>
-                    <span className="text-slate-200 font-semibold">{log.user_name}</span>
+                    <span className="text-slate-200 font-medium">{log.user_name}</span>
                     <span className="text-slate-400 ml-1.5">{log.details}</span>
                   </div>
                 </div>
-                <span className="text-[10px] text-slate-500 whitespace-nowrap ml-3">
+                <span className="text-[11px] text-slate-400 tabular-nums whitespace-nowrap ml-3">
                   {new Date(log.timestamp).toLocaleDateString()}
                 </span>
               </div>
