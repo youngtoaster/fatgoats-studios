@@ -1,0 +1,26 @@
+# Build targets
+target/
+backend-rust/target/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.vscode/
+.idea/
+
+# Local databases
+fatgoats_studios.db*
+*.db-shm
+*.db-wal
+
+# Android & iOS local build artifacts
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/app/build/
+frontend/ios/App/build/
+frontend/ios/App/Pods/

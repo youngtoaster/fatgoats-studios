@@ -1,0 +1,666 @@
+import { StudioDatabaseState } from '../types';
+
+export const initialStudioState: StudioDatabaseState = {
+  projects: [
+    {
+      id: 'proj_nebula_01',
+      title: 'Nebula Chronicles',
+      description: 'A hard sci-fi space opera tracking the voyage of the deep-recon starcruiser Aethel through unmapped rift anomalies.',
+      logo_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&auto=format&fit=crop&q=80',
+      created_at: '2026-01-15T00:00:00Z',
+      status: 'In Production',
+      target_release: 'Q4 2027',
+      season_count: 2,
+      active: true,
+    },
+    {
+      id: 'proj_solaris_02',
+      title: 'Solstice Protocol',
+      description: 'Cyberpunk animated noir detective short film set in neon-drenched low Earth orbital towers.',
+      logo_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=80',
+      created_at: '2026-02-01T00:00:00Z',
+      status: 'Pre-Production',
+      target_release: 'Q2 2027',
+      season_count: 1,
+      active: false,
+    },
+  ],
+  episodes: [
+    {
+      id: 'ep_101',
+      project_id: 'proj_nebula_01',
+      season_number: 1,
+      episode_number: 1,
+      title: 'Signals in the Static',
+      synopsis: 'An unmanned communications beacon goes dark at the edge of the Kuiper belt, broadcasting a subsonic pulse.',
+      runtime_mins: 52,
+      status: 'Locked',
+      progress_pct: 100,
+    },
+    {
+      id: 'ep_102',
+      project_id: 'proj_nebula_01',
+      season_number: 1,
+      episode_number: 2,
+      title: 'The Derelict Orbital',
+      synopsis: 'Commander Vance leads a boarding detachment into an ancient pre-collapse research habitat.',
+      runtime_mins: 48,
+      status: 'Production',
+      progress_pct: 65,
+    },
+    {
+      id: 'ep_103',
+      project_id: 'proj_nebula_01',
+      season_number: 1,
+      episode_number: 3,
+      title: 'Event Horizon Protocol',
+      synopsis: 'With propulsion critically failing, Dr. Rostova proposes a gravimetric slingshot through the dark rift.',
+      runtime_mins: 55,
+      status: 'Scripting',
+      progress_pct: 30,
+    },
+  ],
+  scenes: [
+    {
+      id: 'sc_101',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_101',
+      scene_number: 1,
+      slugline: 'EXT. DEEP SPACE RELAY - ORBITAL DAWN',
+      content: `EXT. DEEP SPACE RELAY - ORBITAL DAWN
+
+The black void of Sector 9 glimmers with cold, distant stars.
+Drifting silently, the AETHEL-CLASS RECON CRUISER comes into frame.
+Its navigational deflectors emit a faint amber pulse.
+
+INT. BRIDGE - STARCRUISER AETHEL - CONTINUOUS
+
+COMMANDER TYLER VANCE (38) stands before the central holographic tactical sphere.
+His uniform is worn at the cuffs. Exhaustion lines his jaw.
+
+VANCE
+(leaning forward)
+Elena, isolate that harmonic. Tell me that's solar flare reverberation.
+
+DR. ELENA ROSTOVA (34) doesn't look up from her sensor console. Her fingers dance across the tactile interface.
+
+ELENA
+Solar flares don't modulate in Fibonacci sequences, Tyler. It's an intelligent broadcast. And it's coming from inside the derelict.
+
+VECTOR-7 (V.O.)
+Hull temperature dropping three degrees per second. Atmospheric seal on Docking Ring B has been breached.
+
+VANCE
+Lock down the bulkheads. Nobody touches that airlock until we know who sent that greeting.
+
+CUT TO:
+
+INT. CORRIDOR - DOCKING RING B - MOMENTS LATER
+
+Frost creeps over the steel walls. Klaxons pulse in rhythm.
+
+FADE OUT.`,
+      synopsis: 'The Starcruiser Aethel approaches the silent deep space relay and intercepts an impossible signal.',
+      locked_until: null,
+      is_spoiler: false,
+      location: 'Deep Space Sector 9',
+      time_of_day: 'Orbital Dawn',
+      page_length: 2.5,
+      voice_memo_url: 'https://actions.google.com/sounds/v1/science_fiction/alien_beacon.ogg',
+      voice_memo_duration: 14.2,
+      created_at: '2026-02-01T10:00:00Z',
+    },
+    {
+      id: 'sc_102',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_102',
+      scene_number: 4,
+      slugline: 'EXT. THE DERELICT ORBITAL SPIRE - DEEP SHADOW',
+      content: `EXT. THE DERELICT ORBITAL SPIRE - DEEP SHADOW
+
+A monolithic metallic ring, overgrown with crystallized dust. It spins slowly against the dark nebula.
+
+INT. AIRLOCK VESTIBULE - CONTINUOUS
+
+VANCE and ELENA in pressurized EVA suits. Oxygen hiss fills the helmets.
+
+VANCE
+(into comms)
+Remember the protocol. We observe, we sample, we withdraw. No heroics.
+
+ELENA
+When have I ever done heroics?
+
+VANCE
+Titan colony. Station 4.
+
+ELENA
+(smiling under visor)
+That was science. Completely different.`,
+      synopsis: 'Vance and Elena breach the outer ring of the ancient orbital spire.',
+      locked_until: new Date(Date.now() + 48 * 3600 * 1000).toISOString(),
+      is_spoiler: true,
+      location: 'Derelict Spire',
+      time_of_day: 'Deep Shadow',
+      page_length: 3.0,
+      voice_memo_url: null,
+      voice_memo_duration: null,
+      created_at: '2026-02-05T14:30:00Z',
+    },
+  ],
+  characters: [
+    {
+      id: 'char_vance',
+      project_id: 'proj_nebula_01',
+      name: 'Commander Tyler Vance',
+      role: 'Protagonist',
+      age: 38,
+      actor_name: 'Tyler Vance',
+      linked_user_id: 'user_tyler',
+      backstory: 'Veteran of the Kuiper Border conflict. Retired from fleet command before being recruited for the unmapped Rift Expedition.',
+      personality_traits: ['Pragmatic', 'Protective', 'Haunted by Titan Incident', 'Decisive'],
+      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+      gallery_images: [
+        { id: 'g1', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80', caption: 'Flight Suit Standard Uniform' },
+        { id: 'g2', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80', caption: 'EVA pressurized gear concept' },
+      ],
+      voice_clips: [
+        { id: 'vc_1', title: 'Bridge Command Callout', audioUrl: 'https://actions.google.com/sounds/v1/science_fiction/alien_breath.ogg', duration: 8.4, recordedAt: '2026-02-01' },
+        { id: 'vc_2', title: 'Airlock EVA Monologue', audioUrl: 'https://actions.google.com/sounds/v1/science_fiction/humming_engine.ogg', duration: 12.1, recordedAt: '2026-02-03' },
+      ],
+      created_at: '2026-01-20T12:00:00Z',
+    },
+    {
+      id: 'char_elena',
+      project_id: 'proj_nebula_01',
+      name: 'Dr. Elena Rostova',
+      role: 'Protagonist',
+      age: 34,
+      actor_name: 'Sofia Chen',
+      linked_user_id: 'user_sofia',
+      backstory: 'Chief Science Officer of the Aethel. Her theoretical equations on rift gravimetrics made the voyage possible.',
+      personality_traits: ['Brilliant Astrophysicist', 'Curious', 'Uncompromising', 'Witty'],
+      avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+      gallery_images: [
+        { id: 'g3', url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80', caption: 'Laboratory diagnostics attire' },
+      ],
+      voice_clips: [],
+      created_at: '2026-01-20T12:00:00Z',
+    },
+    {
+      id: 'char_vector7',
+      project_id: 'proj_nebula_01',
+      name: 'Vector-7',
+      role: 'Supporting',
+      age: 'Synthetic',
+      actor_name: 'Marcus Holt',
+      linked_user_id: 'user_marcus',
+      backstory: 'Synthetic Tactical Cybernetic Unit integrated into the ship systems, holding emergency override authority.',
+      personality_traits: ['Tactical AI', 'Logical', 'Quiet Dry Humor', 'Ultra-Perceptive'],
+      avatar_url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&auto=format&fit=crop&q=80',
+      gallery_images: [],
+      voice_clips: [],
+      created_at: '2026-01-21T09:00:00Z',
+    },
+  ],
+  storyboard_frames: [
+    {
+      id: 'sb_01',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_101',
+      scene_id: 'sc_101',
+      sequence_index: 1,
+      image_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80',
+      camera_framing: 'Extreme Wide',
+      camera_movement: 'Tracking',
+      dialogue_text: "VANCE (V.O.): Out here, silence isn't empty. It's waiting.",
+      director_notes: 'Start with low aperture. Stars slowly illuminate hull detailing as cruiser glides left to right.',
+      sound_effects: 'Low subsonic drone, intermittent transmitter beep',
+      duration_seconds: 4.5,
+    },
+    {
+      id: 'sb_02',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_101',
+      scene_id: 'sc_101',
+      sequence_index: 2,
+      image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80',
+      camera_framing: 'Close-Up',
+      camera_movement: 'Static',
+      dialogue_text: "VANCE: Tell me that's solar flare reverberation.",
+      director_notes: "Tight focus on Vance's eyes reflecting the green amber tactical hologram.",
+      sound_effects: 'Console telemetry clicking',
+      duration_seconds: 3.0,
+    },
+    {
+      id: 'sb_03',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_102',
+      scene_id: 'sc_102',
+      sequence_index: 3,
+      image_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80',
+      camera_framing: 'Dutch Angle',
+      camera_movement: 'Dolly Zoom',
+      dialogue_text: 'VECTOR-7: Atmospheric seal breached.',
+      director_notes: 'Rapid snap zoom into the frosted airlock seal to heighten claustrophobic urgency.',
+      sound_effects: 'Air pressurization klaxon, metal groaning',
+      duration_seconds: 2.8,
+    },
+  ],
+  whiteboards: [
+    {
+      id: 'wb_01',
+      project_id: 'proj_nebula_01',
+      title: 'Season 1 Master Narrative Arc',
+      category: 'Narrative',
+      is_pinned: true,
+      is_locked: false,
+      nodes: [
+        {
+          id: 'node_1',
+          board_id: 'wb_01',
+          node_type: 'sticky_note',
+          x: 80,
+          y: 100,
+          width: 240,
+          height: 160,
+          title: 'Act 1 Inciting Incident',
+          content: 'Aethel detects ancient harmonic beacon modulated with human vocal frequencies from before the spaceflight era.',
+          color: '#f59e0b',
+        },
+        {
+          id: 'node_2',
+          board_id: 'wb_01',
+          node_type: 'narrative_card',
+          x: 380,
+          y: 100,
+          width: 280,
+          height: 200,
+          title: 'Act 2 Midpoint Twist',
+          content: 'The derelict station is not abandoned: it is a time-dilated ark holding the original colony expedition from 2140.',
+          color: '#38bdf8',
+        },
+        {
+          id: 'node_3',
+          board_id: 'wb_01',
+          node_type: 'sticky_note',
+          x: 720,
+          y: 100,
+          width: 240,
+          height: 160,
+          title: 'Climax Dilemma',
+          content: "Slingshot through the Rift to return home vs preserve the ark's remaining power core.",
+          color: '#ef4444',
+        },
+        {
+          id: 'node_4',
+          board_id: 'wb_01',
+          node_type: 'text_annotation',
+          x: 380,
+          y: 340,
+          width: 300,
+          height: 60,
+          title: 'Director Note',
+          content: 'Keep color palette desaturated blue in Act 1, transitioning to gold/amber upon entering the ark.',
+          color: '#94a3b8',
+        },
+      ],
+      edges: [
+        { id: 'edge_1', board_id: 'wb_01', from_node_id: 'node_1', to_node_id: 'node_2', label: 'Leads To Investigation' },
+        { id: 'edge_2', board_id: 'wb_01', from_node_id: 'node_2', to_node_id: 'node_3', label: 'Forces Moral Choice' },
+      ],
+      created_at: '2026-01-18T10:00:00Z',
+    },
+  ],
+  chat_messages: [
+    {
+      id: 'msg_01',
+      project_id: 'proj_nebula_01',
+      channel_id: 'writers-room',
+      sender_id: 'user_tyler',
+      sender_name: 'Tyler Vance',
+      sender_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+      content: 'Welcome to the Season 1 production room. Script drafts for episodes 1 & 2 are in the suite. Check out the snippet below:',
+      message_type: 'script_snippet',
+      script_snippet_data: {
+        sceneSlug: 'EXT. DEEP SPACE RELAY - ORBITAL DAWN',
+        scriptText: "ELENA\nSolar flares don't modulate in Fibonacci sequences, Tyler. It's an intelligent broadcast.",
+      },
+      is_starred: true,
+      read_by: ['user_tyler', 'user_sofia', 'user_marcus'],
+      created_at: '2026-02-08T09:15:00Z',
+    },
+    {
+      id: 'msg_02',
+      project_id: 'proj_nebula_01',
+      channel_id: 'writers-room',
+      sender_id: 'user_sofia',
+      sender_name: 'Sofia Chen',
+      sender_avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80',
+      content: 'Here is the key decision point for the Ep 3 table read. Cast your votes:',
+      message_type: 'poll',
+      poll_data: {
+        question: 'Should Vance sacrifice the relay array in Episode 3 to save the ark crew?',
+        options: [
+          { id: 'opt1', text: 'Yes, high stakes moral sacrifice', votes: ['user_sofia', 'user_marcus'] },
+          { id: 'opt2', text: 'No, preserve the lifeline to Earth', votes: ['user_tyler'] },
+        ],
+      },
+      is_starred: false,
+      read_by: ['user_sofia'],
+      created_at: '2026-02-08T10:30:00Z',
+    },
+  ],
+  kanban_tasks: [
+    {
+      id: 'task_01',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_101',
+      column_id: 'approved',
+      title: 'Finalize Act 1 Screenplay Table Polish',
+      description: 'Polish dialog cadence for Vance and Elena in scene 101. Fountain cues verified.',
+      priority: 'High',
+      due_date: '2026-02-15',
+      assignee_id: 'user_tyler',
+      assignee_name: 'Tyler Vance',
+      tagged_character_ids: ['char_vance', 'char_elena'],
+      labels: ['Screenplay', 'Polish'],
+      created_at: '2026-02-02T10:00:00Z',
+    },
+    {
+      id: 'task_02',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_102',
+      column_id: 'animation',
+      title: 'Derelict Spire 3D Lighting & Texture Turnaround',
+      description: 'Create matte painting and 3D geometric breakdown of ancient orbital architecture.',
+      priority: 'Urgent',
+      due_date: '2026-02-28',
+      assignee_id: 'user_marcus',
+      assignee_name: 'Marcus Holt',
+      tagged_character_ids: [],
+      labels: ['VFX', '3D Assets'],
+      created_at: '2026-02-04T11:00:00Z',
+    },
+    {
+      id: 'task_03',
+      project_id: 'proj_nebula_01',
+      episode_id: 'ep_101',
+      column_id: 'review',
+      title: 'Voice Actor Audition Review for Vector-7',
+      description: 'Listen to processed cybernetic modulation auditions in the character dossier.',
+      priority: 'Medium',
+      due_date: '2026-03-01',
+      assignee_id: 'user_sofia',
+      assignee_name: 'Sofia Chen',
+      tagged_character_ids: ['char_vector7'],
+      labels: ['Casting', 'Audio'],
+      created_at: '2026-02-05T16:00:00Z',
+    },
+  ],
+  assets: [
+    {
+      id: 'ast_01',
+      project_id: 'proj_nebula_01',
+      folder_path: '/Concept Art/Vehicles',
+      filename: 'Aethel_Starcruiser_Blueprint_v3.png',
+      file_type: 'image',
+      file_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
+      file_size_bytes: 4200150,
+      tags: ['Aethel', 'Starcruiser', 'Blueprint', 'Hero Ship'],
+      version: 'v3.2',
+      uploaded_by: 'Tyler Vance',
+      deep_links: ['lore_02', 'sc_101'],
+      created_at: '2026-01-25T14:00:00Z',
+    },
+    {
+      id: 'ast_02',
+      project_id: 'proj_nebula_01',
+      folder_path: '/Soundtracks/Stems',
+      filename: 'Nebula_Main_Theme_Master_24bit.wav',
+      file_type: 'audio',
+      file_url: 'https://actions.google.com/sounds/v1/science_fiction/alien_beacon.ogg',
+      file_size_bytes: 18432000,
+      tags: ['Score', 'OST', 'Theme'],
+      version: 'v1.0',
+      uploaded_by: 'Sofia Chen',
+      deep_links: ['snd_02'],
+      created_at: '2026-02-01T09:30:00Z',
+    },
+  ],
+  soundboard_clips: [
+    {
+      id: 'snd_01',
+      project_id: 'proj_nebula_01',
+      title: 'Vance: All Crew Battle Stations',
+      category: 'Dialogue',
+      audio_url: 'https://actions.google.com/sounds/v1/science_fiction/alien_breath.ogg',
+      duration_seconds: 3.4,
+      waveform_points: [12, 28, 45, 62, 78, 60, 42, 25, 10],
+      is_looping: false,
+      volume: 0.9,
+      created_at: '2026-02-02T10:00:00Z',
+    },
+    {
+      id: 'snd_02',
+      project_id: 'proj_nebula_01',
+      title: 'Sub-light Warp Engine Hum',
+      category: 'Ambient',
+      audio_url: 'https://actions.google.com/sounds/v1/science_fiction/humming_engine.ogg',
+      duration_seconds: 15.0,
+      waveform_points: [30, 32, 35, 33, 31, 34, 32, 35, 30],
+      is_looping: true,
+      volume: 0.6,
+      created_at: '2026-02-02T10:15:00Z',
+    },
+    {
+      id: 'snd_03',
+      project_id: 'proj_nebula_01',
+      title: 'Airlock Decompression Pulse',
+      category: 'SFX',
+      audio_url: 'https://actions.google.com/sounds/v1/science_fiction/airlock_door_open.ogg',
+      duration_seconds: 4.2,
+      waveform_points: [5, 15, 85, 95, 70, 45, 20, 8, 2],
+      is_looping: false,
+      volume: 1.0,
+      created_at: '2026-02-03T11:00:00Z',
+    },
+  ],
+  lore_articles: [
+    {
+      id: 'lore_01',
+      project_id: 'proj_nebula_01',
+      title: 'The Astraea Accord',
+      category: 'Faction',
+      emoji_icon: '🏛️',
+      cover_image_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80',
+      summary: 'The unified governing treaty binding Earth, Mars colonies, and the Outer Rim Mining Consortium.',
+      content_markdown: `# The Astraea Accord
+
+Ratified in 2188 following the Kuiper Skirmishes, the Accord established neutral transit corridors across the Sol system and founded the Joint Deep Recon Fleet.
+
+### Core Tenets
+- Universal scientific data sharing across member colonies.
+- Demilitarization of unmapped outer-belt jump gates.
+- Collective defense response against unknown extra-solar incursions.`,
+      property_cards: [
+        { key: 'Government', value: 'Interstellar Coalition Council' },
+        { key: 'Capital', value: 'High Orbital Spire Olympus' },
+        { key: 'Military Arm', value: 'Recon Vanguard Fleet' },
+        { key: 'Status', value: 'Mobilized' },
+      ],
+      tags: ['Accord', 'Politics', 'Treaty', 'Lore'],
+      attached_asset_ids: ['ast_01'],
+      updated_at: '2026-02-05T12:00:00Z',
+    },
+    {
+      id: 'lore_02',
+      project_id: 'proj_nebula_01',
+      title: 'Aethel-Class Long-Range Frigate',
+      category: 'Technology',
+      emoji_icon: '🚀',
+      cover_image_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80',
+      summary: 'A specialized reconnaissance vessel built to sustain autonomous three-year deployments into rift anomalies.',
+      content_markdown: `# Aethel-Class Specifications
+
+Equipped with a reinforced titanium-carbyne hull and a dual graviton drive, the Aethel is the flagship vessel of the Expeditionary Arm.`,
+      property_cards: [
+        { key: 'Ship Class', value: 'Mark IV Deep Recon' },
+        { key: 'Length', value: '420 meters' },
+        { key: 'Crew Compliment', value: '48 Officers & Specialists' },
+        { key: 'Propulsion', value: 'Ion-Graviton Dual Drive' },
+      ],
+      tags: ['Ship', 'Tech', 'Aethel'],
+      attached_asset_ids: ['ast_01'],
+      updated_at: '2026-02-06T15:00:00Z',
+    },
+  ],
+  milestones: [
+    {
+      id: 'ms_01',
+      project_id: 'proj_nebula_01',
+      phase: 'Scripting & Writing',
+      title: 'Season 1 Episodes 1-3 Lock',
+      description: 'Final script lock, Fountain scene formatting, teleprompter read-throughs.',
+      target_date: '2026-03-15',
+      status: 'completed',
+      progress_pct: 100,
+    },
+    {
+      id: 'ms_02',
+      project_id: 'proj_nebula_01',
+      phase: 'Casting & Table Reads',
+      title: 'Cast Voice Auditions & Character Signoffs',
+      description: 'Voice actor casting sessions for Vance, Elena, and Vector-7. Character dossiers completed.',
+      target_date: '2026-04-01',
+      status: 'in_progress',
+      progress_pct: 85,
+    },
+    {
+      id: 'ms_03',
+      project_id: 'proj_nebula_01',
+      phase: 'Production & Principle Photography',
+      title: 'Storyboard Sequence & Shot Block Approval',
+      description: 'Shot-by-shot sequence animatics for derelict boarding action.',
+      target_date: '2026-05-15',
+      status: 'in_progress',
+      progress_pct: 40,
+    },
+    {
+      id: 'ms_04',
+      project_id: 'proj_nebula_01',
+      phase: 'Post-Production & Scoring',
+      title: 'Soundtrack & Foley Scoring Suite Lock',
+      description: 'Final master mix of orchestral synth stems and voice dubbing.',
+      target_date: '2026-07-01',
+      status: 'pending',
+      progress_pct: 10,
+    },
+    {
+      id: 'ms_05',
+      project_id: 'proj_nebula_01',
+      phase: 'Distribution & Release',
+      title: 'Studio Premiere Screener Delivery',
+      description: 'Master 4K HDR packaging and interactive franchise bible distribution.',
+      target_date: '2026-10-30',
+      status: 'pending',
+      progress_pct: 0,
+    },
+  ],
+  team_members: [
+    {
+      id: 'user_tyler',
+      name: 'Tyler Vance',
+      email: 'tyler@fatgoats.studio',
+      role_tier: 'Super Admin',
+      studio_title: 'Showrunner & Director',
+      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
+      banner_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
+      bio: 'Creator of Nebula Chronicles. Oversees cinematic writing rooms, episodic pacing, and direct production pipeline.',
+      skill_tags: ['Directing', 'Screenwriting', 'Worldbuilding', 'Pipeline Management'],
+      portfolio_url: 'https://fatgoats.studio/tyler',
+      timezone: 'America/New_York (UTC-5)',
+      working_hours: '09:00 - 18:00 EST',
+      availability_status: 'Reviewing Episode 2 Boarding Animatics',
+      availability_status_emoji: '🎬',
+      linked_character_id: 'char_vance',
+    },
+    {
+      id: 'user_sofia',
+      name: 'Sofia Chen',
+      email: 'sofia@fatgoats.studio',
+      role_tier: 'Admin',
+      studio_title: 'Lead Writer & Science Consultant',
+      avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
+      banner_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
+      bio: 'Astrophysics background turned narrative designer. Crafts hard sci-fi dialogue and franchise continuity bible.',
+      skill_tags: ['Screenwriting', 'Astrophysics', 'Dialogue Polish', 'Lore Design'],
+      portfolio_url: 'https://fatgoats.studio/sofia',
+      timezone: 'America/Los_Angeles (UTC-8)',
+      working_hours: '08:00 - 17:00 PST',
+      availability_status: 'In Writers Room Sprint',
+      availability_status_emoji: '✍️',
+      linked_character_id: 'char_elena',
+    },
+    {
+      id: 'user_marcus',
+      name: 'Marcus Holt',
+      email: 'marcus@fatgoats.studio',
+      role_tier: 'Editor',
+      studio_title: 'Lead Sound Designer & Foley Artist',
+      avatar_url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&auto=format&fit=crop&q=80',
+      banner_url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
+      bio: 'Composer and sound supervisor. Manages show soundboard, ambient acoustics, and voice actor auditions.',
+      skill_tags: ['Audio Engineering', 'Soundboard FX', 'Foley', 'Scoring'],
+      portfolio_url: 'https://fatgoats.studio/marcus',
+      timezone: 'Europe/London (UTC+0)',
+      working_hours: '10:00 - 19:00 GMT',
+      availability_status: 'Mastering Warp Resonance Stems',
+      availability_status_emoji: '🎧',
+      linked_character_id: 'char_vector7',
+    },
+  ],
+  audit_logs: [
+    {
+      id: 'log_01',
+      project_id: 'proj_nebula_01',
+      user_id: 'user_tyler',
+      user_name: 'Tyler Vance',
+      action_type: 'CREATE',
+      entity_type: 'Project',
+      entity_title: 'Nebula Chronicles',
+      details: 'Initialized workspace pipeline and registered initial season episodes.',
+      timestamp: '2026-01-15T00:00:00Z',
+    },
+    {
+      id: 'log_02',
+      project_id: 'proj_nebula_01',
+      user_id: 'user_sofia',
+      user_name: 'Sofia Chen',
+      action_type: 'UPDATE',
+      entity_type: 'Scene',
+      entity_title: 'EXT. DEEP SPACE RELAY - ORBITAL DAWN',
+      details: 'Updated Fountain script cues and verified character continuity links.',
+      timestamp: '2026-02-01T10:05:00Z',
+    },
+  ],
+  invite_codes: [
+    {
+      id: 'inv_01',
+      code: 'FATGOATS-WRITERS-2026',
+      role_tier: 'Editor',
+      created_by: 'user_tyler',
+      max_uses: 10,
+      times_used: 2,
+      expires_at: '2027-01-01T00:00:00Z',
+      created_at: '2026-01-20T00:00:00Z',
+    },
+  ],
+  system_settings: {
+    studio_name: 'FatGoats Studios Creative Suite',
+    storage_path: './vault_storage',
+    backup_frequency: 'Every 6 Hours',
+    theme_mode: 'dark',
+    is_setup_completed: true,
+  },
+};
