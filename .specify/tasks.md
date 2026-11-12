@@ -1,26 +1,26 @@
 # FatGoats Studios — Implementation Tasks
 
-- [ ] 1. Scaffold frontend React + TypeScript + Vite + Tailwind + Lucide in `fatgoats-studios/frontend`
-- [ ] 2. Scaffold Rust backend in `fatgoats-studios/backend-rust` with Axum, SQLite, WebSocket, and REST API
-- [ ] 3. Implement full relational schema in SQLite (projects, episodes, scenes, characters, storyboards, whiteboards, messages, assets, tasks, milestones, soundboard, lore, audit, invite codes, users)
-- [ ] 4. Build all 13 interactive studio modules in the frontend:
-  - [ ] 4A. Project Dashboard with KPIs, Time-Lock countdown, season/episode progress, sync monitor
-  - [ ] 4B. Script & Screenplay Suite with Fountain parser, countdown lock, auto-character detection, voice memos, teleprompter, analytics
-  - [ ] 4C. Character Continuity Dossiers with bio, visual gallery, voice recorder, global mentions matrix, linked crew
-  - [ ] 4D. Creative Whiteboard & Moodboard with pan/zoom, sticky notes, moodboard cards, SVG connectors, multi-board lock
-  - [ ] 4E. Storyboard Sequence Builder with shots, camera framing/movement, director notes, dialogue, drag reordering
-  - [ ] 4F. Team Communication Hub with channels, DMs, voice notes, script snippets, coordinate pins, polls, soundboard attachments, scratchpads
-  - [ ] 4G. Tasks & Production Kanban with custom columns, character tagging, deadlines, filters
-  - [ ] 4H. Asset Vault with virtual tree, previews, tags, version tracking, deep linking
-  - [ ] 4I. Show Soundboard with categories, live mic recording, waveform controls, 1-click chat share
-  - [ ] 4J. Lore & Worldbuilding Bible with articles, property cards, embedded vault assets, tags
-  - [ ] 4K. Project Timeline & Milestones with production phases, status badges, deadlines
-  - [ ] 4L. Team Directory & Profiles with bios, skill tags, timezones, availability status, 1-click DM
-  - [ ] 4M. System Admin & Security with Setup Wizard, RBAC, invite code generator, full ZIP export/import
-- [ ] 5. Implement Offline Resilience & Sync Engine (heartbeat, local caching, backlog queue)
-- [ ] 6. Setup Cross-Platform wrappers:
-  - [ ] 6A. Windows Native Executable build using Cargo (`fatgoats-studios.exe`)
-  - [ ] 6B. Android Capacitor project configuration (`android/`)
-  - [ ] 6C. iOS Capacitor project configuration (`ios/`)
-- [ ] 7. Verification: build frontend, compile Rust binary, test all routes, verify Windows executable
-- [ ] 8. Git & GitHub: initialize repo, commit, and push to GitHub (`youngtoaster/fatgoats-studios`)
+- [x] 1. Scaffold frontend React + TypeScript + Vite + Tailwind + Lucide in `fatgoats-studios/frontend`
+- [x] 2. Scaffold Rust backend in `fatgoats-studios/backend-rust` with Axum, SQLite, WebSocket, and REST API
+- [x] 3. Implement full relational schema in SQLite (projects, episodes, scenes, characters, storyboards, whiteboards, messages, assets, tasks, milestones, soundboard, lore, audit, invite codes, users)
+- [x] 4. Build all 13 interactive studio modules in the frontend:
+  - [x] 4A. Project Dashboard with KPIs, Time-Lock countdown, season/episode progress, sync monitor
+  - [x] 4B. Script & Screenplay Suite with Fountain parser, countdown lock, auto-character detection, voice memos, teleprompter, analytics
+  - [x] 4C. Character Continuity Dossiers with bio, visual gallery, voice recorder, global mentions matrix, linked crew
+  - [x] 4D. Creative Whiteboard & Moodboard with pan/zoom, sticky notes, moodboard cards, SVG connectors, multi-board lock
+  - [x] 4E. Storyboard Sequence Builder with shots, camera framing/movement, director notes, dialogue, drag reordering
+  - [x] 4F. Team Communication Hub with channels, DMs, voice notes, script snippets, coordinate pins, polls, soundboard attachments, scratchpads
+  - [x] 4G. Tasks & Production Kanban with custom columns, character tagging, deadlines, filters
+  - [x] 4H. Asset Vault with virtual tree, previews, tags, version tracking, deep linking
+  - [x] 4I. Show Soundboard with categories, live mic recording, waveform controls, 1-click chat share
+  - [x] 4J. Lore & Worldbuilding Bible with articles, property cards, embedded vault assets, tags
+  - [x] 4K. Project Timeline & Milestones with production phases, status badges, deadlines
+  - [x] 4L. Team Directory & Profiles with bios, skill tags, timezones, availability status, 1-click DM
+  - [x] 4M. System Admin & Security with Setup Wizard, RBAC, invite code generator, full ZIP export/import
+- [x] 5. Implement Offline Resilience & Sync Engine (heartbeat, local caching, backlog queue)
+- [x] 6. Setup Cross-Platform wrappers:
+  - [x] 6A. Windows Native Executable build using Cargo (`fatgoats-studios.exe`)
+  - [x] 6B. Android Capacitor project configuration (`android/`)
+  - [x] 6C. iOS Capacitor project configuration (`ios/`)
+- [x] 7. Verification: build frontend, compile Rust binary, test all routes, verify Windows executable
+- [x] 8. Git & GitHub: initialize repo, commit, and push to GitHub (`youngtoaster/fatgoats-studios`)
