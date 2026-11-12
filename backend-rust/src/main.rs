@@ -80,6 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/state", get(handlers::get_state).post(handlers::save_state))
         .route("/api/chat/messages", post(handlers::post_chat_message))
         .route("/api/audit", post(handlers::post_audit_log))
+        .route("/api/machines", get(handlers::get_machines))
         .route("/ws", get(ws::ws_handler))
         .with_state(state);
 

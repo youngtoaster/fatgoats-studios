@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import { StudioDatabaseState, ChatMessage, AuditLog } from '../types';
+import { globalConnectionMachine, ConnectionState } from '../machines/connectionMachine';
 
 const BACKEND_URL = 'http://localhost:3001';
 const WS_URL = 'ws://localhost:3001/ws';
@@ -10,9 +11,7 @@ const OFFLINE_BACKLOG_KEY = 'fatgoats_offline_backlog_v1';
 export class ApiService {
   private static ws: WebSocket | null = null;
   private static wsListeners: Array<(event: any) => void> = [];
-  private static isOnline: boolean = true;
-  private static connectionStatusListeners: Array<(online: boolean) => void> = [];
-  private static syncInterval: number | null = null;
+  private static connectionStatusListeners: Array<(state: ConnectionState, online: boolean) => void> = [];
 
   static init() {
     this.checkHealth();
@@ -24,11 +23,22 @@ export class ApiService {
     setInterval(() => {
       this.checkHealth();
     }, 10000);
+
+    // Sync connection machine changes
+    globalConnectionMachine.subscribe((state) => {
+      const isOnline = state === 'CONNECTED_IDLE' || state === 'SYNCING_BATCH';
+      this.connectionStatusListeners.forEach((l) => l(state, isOnline));
+    });
   }
 
-  static onConnectionStatus(listener: (online: boolean) => void) {
+  static getConnectionState(): ConnectionState {
+    return globalConnectionMachine.getState();
+  }
+
+  static onConnectionStatus(listener: (state: ConnectionState, online: boolean) => void) {
     this.connectionStatusListeners.push(listener);
-    listener(this.isOnline);
+    const curr = globalConnectionMachine.getState();
+    listener(curr, curr === 'CONNECTED_IDLE' || curr === 'SYNCING_BATCH');
   }
 
   static onWsMessage(listener: (event: any) => void) {
@@ -36,11 +46,12 @@ export class ApiService {
   }
 
   private static handleNetworkChange(online: boolean) {
-    this.isOnline = online;
-    this.connectionStatusListeners.forEach((l) => l(online));
     if (online) {
+      globalConnectionMachine.send({ type: 'START_CONNECT' });
       this.flushOfflineBacklog();
       this.connectWs();
+    } else {
+      globalConnectionMachine.send({ type: 'DISCONNECT' });
     }
   }
 
@@ -53,8 +64,7 @@ export class ApiService {
       this.ws = new WebSocket(WS_URL);
 
       this.ws.onopen = () => {
-        this.isOnline = true;
-        this.connectionStatusListeners.forEach((l) => l(true));
+        globalConnectionMachine.send({ type: 'CONNECTION_SUCCESS' });
       };
 
       this.ws.onmessage = (event) => {
@@ -67,16 +77,15 @@ export class ApiService {
       };
 
       this.ws.onclose = () => {
-        // Retry after delay
+        globalConnectionMachine.send({ type: 'DISCONNECT' });
         setTimeout(() => this.connectWs(), 5000);
       };
 
       this.ws.onerror = () => {
-        // Silently close and retry
         this.ws?.close();
       };
     } catch {
-      // Offline fallback
+      globalConnectionMachine.send({ type: 'CONNECTION_FAILURE', error: 'WebSocket initialization failed' });
     }
   }
 
@@ -90,17 +99,17 @@ export class ApiService {
     try {
       const res = await fetch(`${BACKEND_URL}/api/health`, { method: 'GET', signal: AbortSignal.timeout(3000) });
       const online = res.ok;
-      if (online !== this.isOnline) {
-        this.isOnline = online;
-        this.connectionStatusListeners.forEach((l) => l(online));
-        if (online) this.flushOfflineBacklog();
+      if (online) {
+        if (globalConnectionMachine.getState() !== 'CONNECTED_IDLE' && globalConnectionMachine.getState() !== 'SYNCING_BATCH') {
+          globalConnectionMachine.send({ type: 'CONNECTION_SUCCESS' });
+          this.flushOfflineBacklog();
+        }
+      } else {
+        globalConnectionMachine.send({ type: 'CONNECTION_FAILURE' });
       }
       return online;
     } catch {
-      if (this.isOnline) {
-        this.isOnline = false;
-        this.connectionStatusListeners.forEach((l) => l(false));
-      }
+      globalConnectionMachine.send({ type: 'CONNECTION_FAILURE' });
       return false;
     }
   }
@@ -137,6 +146,7 @@ export class ApiService {
       const list = current ? JSON.parse(current) : [];
       list.push(mutation);
       localStorage.setItem(OFFLINE_BACKLOG_KEY, JSON.stringify(list));
+      globalConnectionMachine.send({ type: 'QUEUE_MUTATION', mutation });
     } catch (e) {
       console.error('Error saving to offline backlog', e);
     }
@@ -149,13 +159,19 @@ export class ApiService {
       const list = JSON.parse(current);
       if (list.length === 0) return;
 
+      globalConnectionMachine.send({ type: 'START_SYNC' });
       const localState = this.getLocalState();
       if (localState) {
-        await this.saveRemoteState(localState);
+        const success = await this.saveRemoteState(localState);
+        if (success) {
+          localStorage.removeItem(OFFLINE_BACKLOG_KEY);
+          globalConnectionMachine.send({ type: 'SYNC_SUCCESS' });
+          return;
+        }
       }
-      localStorage.removeItem(OFFLINE_BACKLOG_KEY);
+      globalConnectionMachine.send({ type: 'SYNC_FAILURE', error: 'Server rejected batch' });
     } catch (e) {
-      console.error('Failed to flush offline backlog', e);
+      globalConnectionMachine.send({ type: 'SYNC_FAILURE', error: String(e) });
     }
   }
 
@@ -199,7 +215,6 @@ export class ApiService {
   }
 
   static async postChatMessage(msg: ChatMessage): Promise<void> {
-    // Send via WebSocket first for sub-millisecond local network response
     this.sendWsEvent({
       type: 'chat_message',
       payload: msg,
@@ -232,14 +247,11 @@ export class ApiService {
     }
   }
 
-  // Workspace Portability: Full ZIP Archive Export
   static async exportProjectZip(state: StudioDatabaseState): Promise<Blob> {
     const zip = new JSZip();
 
-    // 1. Root Database Schema State
     zip.file('fatgoats_database_state.json', JSON.stringify(state, null, 2));
 
-    // 2. Metadata Manifest
     const manifest = {
       app: 'FatGoats Studios Creative Suite',
       version: '1.0.0',
@@ -250,27 +262,23 @@ export class ApiService {
     };
     zip.file('manifest.json', JSON.stringify(manifest, null, 2));
 
-    // 3. Screenplay Folder with raw .fountain files
     const scriptsFolder = zip.folder('screenplays');
     state.scenes.forEach((scene) => {
       const cleanSlug = scene.slugline.replace(/[^a-zA-Z0-9_-]/g, '_');
       scriptsFolder?.file(`Scene_${scene.scene_number}_${cleanSlug}.fountain`, scene.content);
     });
 
-    // 4. Character Dossiers folder
     const charFolder = zip.folder('characters');
     state.characters.forEach((char) => {
       const cleanName = char.name.replace(/[^a-zA-Z0-9_-]/g, '_');
       charFolder?.file(`${cleanName}_dossier.json`, JSON.stringify(char, null, 2));
     });
 
-    // 5. Whiteboards folder
     const wbFolder = zip.folder('whiteboards');
     state.whiteboards.forEach((wb) => {
       wbFolder?.file(`${wb.id}_${wb.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`, JSON.stringify(wb, null, 2));
     });
 
-    // 6. Lore Wiki folder
     const loreFolder = zip.folder('lore_bible');
     state.lore_articles.forEach((lore) => {
       loreFolder?.file(`${lore.category}_${lore.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.md`, `${lore.content_markdown}\n\n---\nProperties:\n${JSON.stringify(lore.property_cards, null, 2)}`);
@@ -279,7 +287,6 @@ export class ApiService {
     return await zip.generateAsync({ type: 'blob' });
   }
 
-  // Workspace Portability: Full ZIP Archive Import
   static async importProjectZip(file: File): Promise<StudioDatabaseState> {
     const zip = await JSZip.loadAsync(file);
     const stateFile = zip.file('fatgoats_database_state.json');

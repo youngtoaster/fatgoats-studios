@@ -18,6 +18,13 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Whiteboard, WhiteboardNode, WhiteboardEdge, WhiteboardNodeType } from '../types';
+import { useExplicitMachine } from '../machines/useExplicitMachine';
+import {
+  createWhiteboardCanvasMachine,
+  CanvasState,
+  CanvasEvent,
+  CanvasContext,
+} from '../machines/whiteboardCanvasMachine';
 
 interface CreativeWhiteboardProps {
   whiteboards: Whiteboard[];
@@ -47,6 +54,12 @@ export const CreativeWhiteboard: React.FC<CreativeWhiteboardProps> = ({
 
   const currentBoard = whiteboards.find((b) => b.id === activeBoardId) || whiteboards[0];
 
+  // Explicit Canvas Interaction State Machine
+  const [canvasSnapshot, sendCanvas] = useExplicitMachine<CanvasState, CanvasEvent, CanvasContext>(
+    () => createWhiteboardCanvasMachine(currentBoard?.id, Boolean(currentBoard?.is_locked)),
+    [currentBoard?.id, currentBoard?.is_locked]
+  );
+
   // Dragging nodes handler
   const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
     if (currentBoard.is_locked) return;
@@ -54,6 +67,7 @@ export const CreativeWhiteboard: React.FC<CreativeWhiteboardProps> = ({
     const node = currentBoard.nodes.find((n) => n.id === nodeId);
     if (!node) return;
     setDraggedNodeId(nodeId);
+    sendCanvas({ type: 'START_DRAG_NODE', nodeId });
     setDragOffset({
       x: e.clientX / zoom - node.x,
       y: e.clientY / zoom - node.y,
@@ -79,6 +93,7 @@ export const CreativeWhiteboard: React.FC<CreativeWhiteboardProps> = ({
   const handleCanvasMouseUp = () => {
     setDraggedNodeId(null);
     setIsPanning(false);
+    sendCanvas({ type: 'STOP_INTERACTION' });
   };
 
   const handleAddNode = () => {
@@ -126,7 +141,12 @@ export const CreativeWhiteboard: React.FC<CreativeWhiteboardProps> = ({
             <Compass size={20} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Creative Whiteboard & Moodboard</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-white tracking-tight">Creative Whiteboard & Moodboard</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-amber-400 border border-[#2a3144]">
+                FSM: {canvasSnapshot.state}
+              </span>
+            </div>
             <p className="text-xs text-slate-400">Infinite spatial canvas for plot beats, visual moodboards & story architecture</p>
           </div>
         </div>
@@ -213,7 +233,10 @@ export const CreativeWhiteboard: React.FC<CreativeWhiteboardProps> = ({
           backgroundSize: '24px 24px',
         }}
         onMouseDown={(e) => {
-          if (e.target === e.currentTarget) setIsPanning(true);
+          if (e.target === e.currentTarget && !currentBoard?.is_locked) {
+            setIsPanning(true);
+            sendCanvas({ type: 'START_PAN' });
+          }
         }}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}

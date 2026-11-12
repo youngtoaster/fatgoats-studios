@@ -14,9 +14,19 @@ import {
   Wind,
   Zap,
   MessageSquare,
+  RotateCcw,
+  AlertTriangle,
+  Check,
 } from 'lucide-react';
 import { SoundboardClip, StudioDatabaseState } from '../types';
 import { ApiService } from '../services/api';
+import { useExplicitMachine } from '../machines/useExplicitMachine';
+import {
+  createAudioRecorderMachine,
+  AudioRecorderState,
+  AudioRecorderEvent,
+  AudioRecorderContext,
+} from '../machines/audioRecorderMachine';
 
 interface SoundboardProps {
   state: StudioDatabaseState;
@@ -33,11 +43,17 @@ export const Soundboard: React.FC<SoundboardProps> = ({
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
 
   // Live in-browser microphone foley recording
-  const [isRecordingFoley, setIsRecordingFoley] = useState(false);
   const [foleyTitle, setFoleyTitle] = useState('');
   const [foleyCategory, setFoleyCategory] = useState<SoundboardClip['category']>('SFX');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+
+  // Explicit Audio Recorder Machine
+  const [recorderSnapshot, sendRecorder] = useExplicitMachine<
+    AudioRecorderState,
+    AudioRecorderEvent,
+    AudioRecorderContext
+  >(() => createAudioRecorderMachine('soundboard-foley'), []);
 
   // Audio elements map
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
@@ -81,8 +97,9 @@ export const Soundboard: React.FC<SoundboardProps> = ({
     }
   };
 
-  // Live recording handlers
+  // Live recording handlers powered by explicit state machine
   const startRecordingFoley = async () => {
+    sendRecorder({ type: 'START_RECORD' });
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
@@ -96,36 +113,45 @@ export const Soundboard: React.FC<SoundboardProps> = ({
       recorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlob);
-
-        const newClip: SoundboardClip = {
-          id: `snd_${Date.now()}`,
-          project_id: state.projects[0]?.id || 'proj_nebula_01',
-          title: foleyTitle.trim() || `Live ${foleyCategory} #${state.soundboard_clips.length + 1}`,
-          category: foleyCategory,
-          audio_url: url,
-          duration_seconds: 5.0,
-          waveform_points: [15, 30, 75, 90, 60, 40, 20],
-          is_looping: false,
-          volume: 0.9,
-          created_at: new Date().toISOString(),
-        };
-
-        onSaveClip(newClip);
-        setFoleyTitle('');
+        sendRecorder({ type: 'STOP_RECORD', blob: audioBlob, audioUrl: url, duration: 5.0 });
       };
 
       recorder.start();
-      setIsRecordingFoley(true);
-    } catch {
-      alert('Microphone recording unavailable or denied in browser.');
+      sendRecorder({ type: 'MIC_GRANTED', stream });
+    } catch (e: any) {
+      sendRecorder({
+        type: 'MIC_DENIED',
+        error: e?.message || 'Microphone recording unavailable or denied in browser',
+      });
     }
   };
 
   const stopRecordingFoley = () => {
-    if (mediaRecorderRef.current && isRecordingFoley) {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
-      setIsRecordingFoley(false);
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
     }
+  };
+
+  const commitSaveFoley = () => {
+    if (!recorderSnapshot.context.audioUrl) return;
+
+    const newClip: SoundboardClip = {
+      id: `snd_${Date.now()}`,
+      project_id: state.projects[0]?.id || 'proj_nebula_01',
+      title: foleyTitle.trim() || `Live ${foleyCategory} #${state.soundboard_clips.length + 1}`,
+      category: foleyCategory,
+      audio_url: recorderSnapshot.context.audioUrl,
+      duration_seconds: recorderSnapshot.context.durationSeconds || 5.0,
+      waveform_points: [15, 30, 75, 90, 60, 40, 20],
+      is_looping: false,
+      volume: 0.9,
+      created_at: new Date().toISOString(),
+    };
+
+    onSaveClip(newClip);
+    setFoleyTitle('');
+    sendRecorder({ type: 'COMMIT_SAVE' });
   };
 
   // Send soundboard clip to chat
@@ -163,55 +189,102 @@ export const Soundboard: React.FC<SoundboardProps> = ({
             <Radio size={20} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Show Soundboard & Foley Vault</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-white tracking-tight">Show Soundboard & Foley Vault</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-amber-400 border border-[#2a3144]">
+                Recorder: {recorderSnapshot.state}
+              </span>
+            </div>
             <p className="text-xs text-slate-400">Live studio audio banks, instant chat dispatch & live microphone foley recorder</p>
           </div>
         </div>
       </div>
 
-      {/* Live In-Studio Foley Recording Bar */}
+      {/* Live In-Studio Foley Recording Bar (Explicit FSM Powered) */}
       <div className="studio-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-[#12151e] to-[#0f1117]">
         <div>
           <h3 className="text-xs font-bold text-white">Record Foley or Custom Soundbite Live</h3>
-          <p className="text-[11px] text-slate-400">Add mic recordings directly to sound banks</p>
+          <p className="text-[11px] text-slate-400">Capture mic audio with state-machine safety and pre-save preview</p>
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
-          <input
-            type="text"
-            placeholder="Sound label (e.g. Laser Impact)..."
-            value={foleyTitle}
-            onChange={(e) => setFoleyTitle(e.target.value)}
-            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none w-44"
-          />
-          <select
-            value={foleyCategory}
-            onChange={(e) => setFoleyCategory(e.target.value as any)}
-            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2 py-1.5 text-xs text-white outline-none"
-          >
-            <option value="SFX">SFX</option>
-            <option value="Dialogue">Dialogue</option>
-            <option value="Foley">Foley</option>
-            <option value="Ambient">Ambient</option>
-            <option value="Score">Score</option>
-          </select>
+          {recorderSnapshot.state === 'IDLE' && (
+            <>
+              <input
+                type="text"
+                placeholder="Sound label (e.g. Laser Impact)..."
+                value={foleyTitle}
+                onChange={(e) => setFoleyTitle(e.target.value)}
+                className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1.5 text-xs text-white outline-none w-44"
+              />
+              <select
+                value={foleyCategory}
+                onChange={(e) => setFoleyCategory(e.target.value as any)}
+                className="bg-[#161922] border border-[#2a3144] rounded-lg px-2 py-1.5 text-xs text-white outline-none"
+              >
+                <option value="SFX">SFX</option>
+                <option value="Dialogue">Dialogue</option>
+                <option value="Foley">Foley</option>
+                <option value="Ambient">Ambient</option>
+                <option value="Score">Score</option>
+              </select>
+              <button
+                onClick={startRecordingFoley}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs"
+              >
+                <Mic size={13} />
+                <span>Record Live Foley</span>
+              </button>
+            </>
+          )}
 
-          {isRecordingFoley ? (
+          {recorderSnapshot.state === 'REQUESTING_MIC' && (
+            <span className="text-xs text-amber-400 font-mono animate-pulse">Requesting microphone access...</span>
+          )}
+
+          {recorderSnapshot.state === 'RECORDING' && (
             <button
               onClick={stopRecordingFoley}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white font-bold text-xs animate-pulse"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-red-500 text-white font-bold text-xs animate-pulse"
             >
               <Square size={13} />
-              <span>Stop & Save Clip</span>
+              <span>Stop & Review Foley Take</span>
             </button>
-          ) : (
-            <button
-              onClick={startRecordingFoley}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs"
-            >
-              <Mic size={13} />
-              <span>Record Live Foley</span>
-            </button>
+          )}
+
+          {recorderSnapshot.state === 'REVIEWING' && (
+            <div className="flex items-center gap-2 bg-[#161922] p-1.5 rounded-lg border border-[#2a3144]">
+              {recorderSnapshot.context.audioUrl && (
+                <audio src={recorderSnapshot.context.audioUrl} controls className="h-6 w-36" />
+              )}
+              <button
+                onClick={commitSaveFoley}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+              >
+                <Check size={12} />
+                <span>Save to {foleyCategory}</span>
+              </button>
+              <button
+                onClick={() => sendRecorder({ type: 'DISCARD' })}
+                className="p-1 rounded text-slate-400 hover:text-red-400"
+                title="Discard take"
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          )}
+
+          {recorderSnapshot.state === 'ERROR' && (
+            <div className="flex items-center gap-2 text-xs text-red-400">
+              <AlertTriangle size={13} />
+              <span>{recorderSnapshot.context.errorMessage}</span>
+              <button
+                onClick={() => sendRecorder({ type: 'RESET' })}
+                className="p-1 text-slate-400 hover:text-white"
+              >
+                <RotateCcw size={12} />
+              </button>
+            </div>
           )}
         </div>
       </div>

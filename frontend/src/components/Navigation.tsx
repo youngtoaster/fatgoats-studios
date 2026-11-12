@@ -26,6 +26,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Project, RoleTier, StudioDatabaseState } from '../types';
+import { ConnectionState } from '../machines/connectionMachine';
 
 interface NavigationProps {
   activeModule: string;
@@ -35,6 +36,7 @@ interface NavigationProps {
   onSelectProject: (proj: Project) => void;
   state: StudioDatabaseState;
   isOnline: boolean;
+  connectionState?: ConnectionState;
   backlogCount: number;
   onManualSync: () => void;
   onToggleNotes: () => void;
@@ -52,6 +54,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   onSelectProject,
   state,
   isOnline,
+  connectionState,
   backlogCount,
   onManualSync,
   onToggleNotes,
@@ -290,18 +293,38 @@ export const Navigation: React.FC<NavigationProps> = ({
 
         {/* Right: Quick actions, Sync status, Role indicator */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Connection & Sync Indicator */}
+          {/* Explicit Connection & Sync State Machine Indicator */}
           <div
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border font-medium ${
-              isOnline
+              connectionState === 'CONNECTED_IDLE'
                 ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-400'
-                : 'bg-amber-950/30 border-amber-500/30 text-amber-400'
+                : connectionState === 'SYNCING_BATCH'
+                ? 'bg-sky-950/30 border-sky-500/30 text-sky-400'
+                : connectionState === 'OFFLINE_BACKLOG'
+                ? 'bg-amber-950/30 border-amber-500/30 text-amber-400'
+                : 'bg-slate-900 border-slate-700 text-slate-400'
             }`}
-            title={isOnline ? 'Connected to Rust SQLite Backend' : 'Offline Mode: LocalStorage Active with Backlog'}
+            title={`Machine State: ${connectionState || (isOnline ? 'CONNECTED_IDLE' : 'OFFLINE_BACKLOG')}`}
           >
-            {isOnline ? <Wifi size={13} className="text-emerald-400" /> : <WifiOff size={13} className="text-amber-400" />}
-            <span className="hidden sm:inline">{isOnline ? 'Rust DB Sync' : 'Offline'}</span>
-            {backlogCount > 0 && (
+            {connectionState === 'CONNECTED_IDLE' ? (
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
+            ) : connectionState === 'SYNCING_BATCH' ? (
+              <RefreshCw size={12} className="animate-spin text-sky-400" />
+            ) : (
+              <WifiOff size={13} className="text-amber-400" />
+            )}
+            <span className="hidden sm:inline">
+              {connectionState === 'CONNECTED_IDLE'
+                ? 'Rust DB Synced'
+                : connectionState === 'SYNCING_BATCH'
+                ? 'Syncing Backlog...'
+                : connectionState === 'OFFLINE_BACKLOG'
+                ? `Offline (${backlogCount})`
+                : isOnline
+                ? 'Online'
+                : 'Offline'}
+            </span>
+            {backlogCount > 0 && connectionState !== 'OFFLINE_BACKLOG' && (
               <span className="bg-amber-500 text-black font-bold text-[10px] px-1.5 rounded-full ml-1">
                 {backlogCount}
               </span>
@@ -309,7 +332,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             <button
               onClick={handleManualSyncClick}
               className={`p-1 hover:text-white transition-transform ${syncing ? 'animate-spin text-amber-400' : ''}`}
-              title="Force Sync"
+              title="Force Sync / Flush Machine Queue"
             >
               <RefreshCw size={12} />
             </button>

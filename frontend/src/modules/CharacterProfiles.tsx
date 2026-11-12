@@ -14,8 +14,18 @@ import {
   ExternalLink,
   Sparkles,
   UserCheck,
+  Check,
+  RotateCcw,
+  AlertTriangle,
 } from 'lucide-react';
 import { Character, CharacterVoiceClip, CharacterGalleryItem, StudioDatabaseState } from '../types';
+import { useExplicitMachine } from '../machines/useExplicitMachine';
+import {
+  createAudioRecorderMachine,
+  AudioRecorderState,
+  AudioRecorderEvent,
+  AudioRecorderContext,
+} from '../machines/audioRecorderMachine';
 
 interface CharacterProfilesProps {
   state: StudioDatabaseState;
@@ -36,8 +46,7 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
   const [selectedCharId, setSelectedCharId] = useState<string>(characters[0]?.id || '');
   const [activeTab, setActiveTab] = useState<'bio' | 'gallery' | 'voice' | 'matrix'>('bio');
 
-  // Voice recording state
-  const [isRecording, setIsRecording] = useState(false);
+  // Voice recording state & explicit FSM
   const [clipTitle, setClipTitle] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -48,6 +57,12 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
   const [showImageDialog, setShowImageDialog] = useState(false);
 
   const selectedChar = characters.find((c) => c.id === selectedCharId) || characters[0];
+
+  const [recorderSnapshot, sendRecorder] = useExplicitMachine<
+    AudioRecorderState,
+    AudioRecorderEvent,
+    AudioRecorderContext
+  >(() => createAudioRecorderMachine(`char-${selectedChar?.id}`), [selectedChar?.id]);
 
   // Global Mentions Matrix aggregation
   const mentionsMatrix = React.useMemo(() => {
@@ -85,8 +100,9 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
     return { scenes, tasks, storyboards, chats };
   }, [selectedChar, state]);
 
-  // Voice recorder handlers
+  // Voice recorder handlers driven by explicit state machine
   const startRecording = async () => {
+    sendRecorder({ type: 'START_RECORD' });
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
@@ -100,31 +116,40 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
       recorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlob);
-        const newClip: CharacterVoiceClip = {
-          id: `vc_${Date.now()}`,
-          title: clipTitle.trim() || `Voice Take #${(selectedChar.voice_clips?.length || 0) + 1}`,
-          audioUrl: url,
-          duration: 6.5,
-          recordedAt: new Date().toISOString().split('T')[0],
-        };
-
-        const updatedClips = [...(selectedChar.voice_clips || []), newClip];
-        onSaveCharacter({ ...selectedChar, voice_clips: updatedClips });
-        setClipTitle('');
+        sendRecorder({ type: 'STOP_RECORD', blob: audioBlob, audioUrl: url, duration: 6.5 });
       };
 
       recorder.start();
-      setIsRecording(true);
-    } catch {
-      alert('Microphone access is not supported or was denied in this environment.');
+      sendRecorder({ type: 'MIC_GRANTED', stream });
+    } catch (e: any) {
+      sendRecorder({
+        type: 'MIC_DENIED',
+        error: e?.message || 'Microphone access is not supported or was denied',
+      });
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
     }
+  };
+
+  const saveAuditionTake = () => {
+    if (!recorderSnapshot.context.audioUrl || !selectedChar) return;
+    const newClip: CharacterVoiceClip = {
+      id: `vc_${Date.now()}`,
+      title: clipTitle.trim() || `Voice Take #${(selectedChar.voice_clips?.length || 0) + 1}`,
+      audioUrl: recorderSnapshot.context.audioUrl,
+      duration: recorderSnapshot.context.durationSeconds || 6.5,
+      recordedAt: new Date().toISOString().split('T')[0],
+    };
+
+    const updatedClips = [...(selectedChar.voice_clips || []), newClip];
+    onSaveCharacter({ ...selectedChar, voice_clips: updatedClips });
+    setClipTitle('');
+    sendRecorder({ type: 'COMMIT_SAVE' });
   };
 
   const addGalleryImage = () => {
@@ -341,29 +366,71 @@ export const CharacterProfiles: React.FC<CharacterProfilesProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        placeholder="Clip label (e.g. Battle Cry)"
-                        value={clipTitle}
-                        onChange={(e) => setClipTitle(e.target.value)}
-                        className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1 text-xs text-white outline-none w-40"
-                      />
-                      {isRecording ? (
+                      {recorderSnapshot.state === 'IDLE' && (
+                        <>
+                          <input
+                            type="text"
+                            placeholder="Clip label (e.g. Battle Cry)"
+                            value={clipTitle}
+                            onChange={(e) => setClipTitle(e.target.value)}
+                            className="bg-[#161922] border border-[#2a3144] rounded-lg px-2.5 py-1 text-xs text-white outline-none w-40"
+                          />
+                          <button
+                            onClick={startRecording}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold"
+                          >
+                            <Mic size={13} />
+                            <span>Record Take</span>
+                          </button>
+                        </>
+                      )}
+
+                      {recorderSnapshot.state === 'REQUESTING_MIC' && (
+                        <span className="text-xs text-amber-400 font-mono animate-pulse">Requesting mic...</span>
+                      )}
+
+                      {recorderSnapshot.state === 'RECORDING' && (
                         <button
                           onClick={stopRecording}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white font-bold text-xs animate-pulse"
                         >
                           <Square size={13} />
-                          <span>Stop</span>
+                          <span>Stop & Review</span>
                         </button>
-                      ) : (
-                        <button
-                          onClick={startRecording}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold"
-                        >
-                          <Mic size={13} />
-                          <span>Record Take</span>
-                        </button>
+                      )}
+
+                      {recorderSnapshot.state === 'REVIEWING' && (
+                        <div className="flex items-center gap-2 bg-[#161922] p-1 rounded-lg border border-[#2a3144]">
+                          {recorderSnapshot.context.audioUrl && (
+                            <audio src={recorderSnapshot.context.audioUrl} controls className="h-6 w-36" />
+                          )}
+                          <button
+                            onClick={saveAuditionTake}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500 text-black text-xs font-bold hover:bg-amber-400"
+                          >
+                            <Check size={12} />
+                            <span>Save Clip</span>
+                          </button>
+                          <button
+                            onClick={() => sendRecorder({ type: 'DISCARD' })}
+                            className="p-1 rounded text-slate-400 hover:text-red-400"
+                            title="Discard take"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      )}
+
+                      {recorderSnapshot.state === 'ERROR' && (
+                        <div className="flex items-center gap-1 text-xs text-red-400">
+                          <AlertTriangle size={13} />
+                          <button
+                            onClick={() => sendRecorder({ type: 'RESET' })}
+                            className="p-1 text-slate-400 hover:text-white"
+                          >
+                            <RotateCcw size={12} />
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

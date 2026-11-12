@@ -32,6 +32,7 @@ import { LoreWiki } from './modules/LoreWiki';
 import { TimelineView } from './modules/TimelineView';
 import { TeamProfiles } from './modules/TeamProfiles';
 import { AdminPanel } from './modules/AdminPanel';
+import { ConnectionState } from './machines/connectionMachine';
 
 export function App() {
   const [state, setState] = useState<StudioDatabaseState>(() => {
@@ -40,6 +41,7 @@ export function App() {
 
   const [activeModule, setActiveModule] = useState<string>('dashboard');
   const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [connectionState, setConnectionState] = useState<ConnectionState>('CONNECTED_IDLE');
   const [backlogCount, setBacklogCount] = useState<number>(0);
   const [currentRole, setCurrentRole] = useState<RoleTier>('Super Admin');
   const [showNotes, setShowNotes] = useState<boolean>(false);
@@ -52,7 +54,8 @@ export function App() {
   useEffect(() => {
     ApiService.init();
 
-    ApiService.onConnectionStatus((online) => {
+    ApiService.onConnectionStatus((connState, online) => {
+      setConnectionState(connState);
       setIsOnline(online);
       setBacklogCount(ApiService.getOfflineBacklogCount());
     });
@@ -469,6 +472,7 @@ export function App() {
         onSelectProject={handleSelectProject}
         state={state}
         isOnline={isOnline}
+        connectionState={connectionState}
         backlogCount={backlogCount}
         onManualSync={handleManualSync}
         onToggleNotes={() => setShowNotes(!showNotes)}

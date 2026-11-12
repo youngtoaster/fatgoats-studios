@@ -6,10 +6,19 @@ import {
   AlertTriangle,
   Users,
   ChevronRight,
+  ChevronLeft,
+  RotateCcw,
+  CheckCircle2,
   Filter,
   Trash2,
+  Workflow,
 } from 'lucide-react';
 import { KanbanTask, StudioDatabaseState } from '../types';
+import {
+  createKanbanPipelineMachine,
+  KanbanState,
+  KanbanEvent,
+} from '../machines/kanbanPipelineMachine';
 
 interface KanbanBoardProps {
   state: StudioDatabaseState;
@@ -42,10 +51,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     return true;
   });
 
-  const moveTaskColumn = (task: KanbanTask, nextCol: KanbanTask['column_id']) => {
-    onSaveTask({ ...task, column_id: nextCol });
-  };
-
   const getDeadlineStatus = (dueDate: string) => {
     const now = new Date().setHours(0, 0, 0, 0);
     const target = new Date(dueDate).setHours(0, 0, 0, 0);
@@ -60,6 +65,18 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     return { label: dueDate, color: 'text-slate-400 bg-[#161922] border-[#2a3144]' };
   };
 
+  // State Machine transition executor
+  const handleTransition = (task: KanbanTask, event: KanbanEvent) => {
+    const machine = createKanbanPipelineMachine(task);
+    const accepted = machine.send(event);
+    if (accepted) {
+      onSaveTask({
+        ...task,
+        column_id: machine.getState(),
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Top Header & Filters */}
@@ -69,7 +86,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             <CheckSquare size={20} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight">Tasks & Production Kanban</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-white tracking-tight">Tasks & Production Kanban</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#161922] text-purple-400 border border-[#2a3144]">
+                Guarded FSM Engine
+              </span>
+            </div>
             <p className="text-xs text-slate-400">Pipeline workflows, character assignment tags, and deadline warnings</p>
           </div>
         </div>
@@ -115,7 +137,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
       {/* Kanban 5-Column Board */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto min-h-[600px]">
-        {columns.map((col, colIdx) => {
+        {columns.map((col) => {
           const colTasks = filteredTasks.filter((t) => t.column_id === col.id);
 
           return (
@@ -141,6 +163,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                     const taggedChars = state.characters.filter((c) =>
                       task.tagged_character_ids?.includes(c.id)
                     );
+
+                    // Inspect state machine for this specific task
+                    const taskMachine = createKanbanPipelineMachine(task);
+                    const machineInspection = taskMachine.inspect();
+                    const availableTransitions = machineInspection.availableTransitions;
 
                     return (
                       <div
@@ -192,24 +219,72 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                           </span>
                         </div>
 
-                        {/* Column Progression Button */}
-                        <div className="flex items-center justify-between pt-1 text-[10px]">
+                        {/* Guarded Pipeline Machine Transitions */}
+                        <div className="pt-2 border-t border-[#1e2330]/70 flex flex-wrap items-center justify-between gap-1 text-[10px]">
                           <button
                             onClick={() => onDeleteTask(task.id)}
-                            className="text-slate-500 hover:text-red-400"
+                            className="p-1 text-slate-500 hover:text-red-400 rounded"
                             title="Delete Task"
                           >
                             <Trash2 size={12} />
                           </button>
-                          {colIdx < columns.length - 1 && (
-                            <button
-                              onClick={() => moveTaskColumn(task, columns[colIdx + 1].id)}
-                              className="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-0.5"
-                            >
-                              <span>Next</span>
-                              <ChevronRight size={12} />
-                            </button>
-                          )}
+
+                          <div className="flex items-center gap-1">
+                            {/* Available Guarded Actions */}
+                            {availableTransitions.map((tr) => {
+                              const evt = tr.event;
+                              const isForward =
+                                evt === 'START_SCRIPTING' ||
+                                evt === 'SEND_TO_ANIMATION' ||
+                                evt === 'SUBMIT_FOR_REVIEW' ||
+                                evt === 'APPROVE_TASK';
+
+                              const getActionLabel = (e: string) => {
+                                switch (e) {
+                                  case 'START_SCRIPTING':
+                                    return 'Start Scripting';
+                                  case 'SEND_TO_ANIMATION':
+                                    return 'To Animation';
+                                  case 'SUBMIT_FOR_REVIEW':
+                                    return 'Submit Review';
+                                  case 'APPROVE_TASK':
+                                    return 'Approve';
+                                  case 'REQUEST_REWORK':
+                                    return 'Rework';
+                                  case 'REOPEN_TASK':
+                                    return 'Reopen';
+                                  default:
+                                    return e;
+                                }
+                              };
+
+                              return (
+                                <button
+                                  key={evt}
+                                  onClick={() => handleTransition(task, { type: evt as any })}
+                                  className={`px-2 py-0.5 rounded text-[9px] font-semibold flex items-center gap-0.5 transition-colors ${
+                                    isForward
+                                      ? evt === 'APPROVE_TASK'
+                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                                        : 'bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25'
+                                      : 'bg-[#161922] text-slate-400 border border-[#2a3144] hover:text-slate-200'
+                                  }`}
+                                  title={`Transition task via FSM: ${evt}`}
+                                >
+                                  {isForward ? (
+                                    evt === 'APPROVE_TASK' ? (
+                                      <CheckCircle2 size={10} />
+                                    ) : (
+                                      <ChevronRight size={10} />
+                                    )
+                                  ) : (
+                                    <ChevronLeft size={10} />
+                                  )}
+                                  <span>{getActionLabel(evt)}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     );
